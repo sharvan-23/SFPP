@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slot Booking | Kisan Kendra</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wheat:#D9A441;
+    --wheat-dark:#B9832A;
+    --leaf:#2D5F3E;
+    --leaf-dark:#1F4530;
+    --leaf-tint:#E7F0E9;
+    --soil:#6B4226;
+    --paper:#FBF7EE;
+    --paper-dim:#F1E9D8;
+    --ink:#2B2420;
+    --alert:#C1440E;
+  }
+  body{
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family:'Inter',sans-serif;
+    background-image: radial-gradient(circle at 1px 1px, rgba(107,66,38,0.08) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  .font-display{ font-family:'Fraunces', serif; }
+  .font-mono{ font-family:'JetBrains Mono', monospace; }
+  .font-hi{ font-family:'Noto Sans Devanagari', sans-serif; }
+
+  .field-input{
+    background: var(--paper);
+    border: 2px solid #D8CBAE;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .field-input:focus{
+    outline:none; border-color: var(--leaf);
+    box-shadow: 0 0 0 3px rgba(45,95,62,0.15);
+  }
+
+  .btn-primary{
+    background: var(--leaf); color: var(--paper);
+    transition: transform .12s ease, background .15s ease;
+  }
+  .btn-primary:hover{ background: var(--leaf-dark); transform: translateY(-1px); }
+  .btn-primary:disabled{ background:#B9B2A0; cursor:not-allowed; transform:none; }
+
+  .center-card{
+    border:2px solid #D8CBAE; transition: border-color .15s ease, background .15s ease;
+  }
+  .center-card.selected{
+    border-color: var(--leaf); background: var(--leaf-tint);
+  }
+
+  .slot-card{
+    border:2px solid #D8CBAE; background: white;
+    transition: border-color .15s ease, transform .12s ease, box-shadow .15s ease;
+    cursor:pointer;
+  }
+  .slot-card:hover{ transform: translateY(-2px); box-shadow: 0 6px 16px rgba(43,36,32,0.08); }
+  .slot-card.selected{ border-color: var(--wheat-dark); background: #FFF7E6; }
+  .slot-card.full{
+    opacity:.5; cursor:not-allowed; background:#F1EEE6;
+  }
+  .slot-card.full:hover{ transform:none; box-shadow:none; }
+
+  .capacity-bar{ background:#E5DEC9; }
+  .capacity-fill{ background: var(--leaf); }
+  .capacity-fill.warn{ background: var(--wheat-dark); }
+  .capacity-fill.hot{ background: var(--alert); }
+
+  /* modal */
+  .modal-backdrop{
+    background: rgba(43,36,32,0.45);
+    opacity:0; pointer-events:none; transition: opacity .25s ease;
+  }
+  .modal-backdrop.show{ opacity:1; pointer-events:auto; }
+  .modal-panel{
+    transform: translateY(24px) scale(.97); opacity:0;
+    transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .25s ease;
+  }
+  .modal-backdrop.show .modal-panel{ transform: translateY(0) scale(1); opacity:1; }
+
+  .sms-toast{
+    transform: translateY(140%);
+    transition: transform .45s cubic-bezier(.22,1,.36,1);
+  }
+  .sms-toast.show{ transform: translateY(0); }
+
+  .ticket-edge{
+    background:
+      radial-gradient(circle 8px at 0 50%, transparent 8px, var(--paper) 8px),
+      radial-gradient(circle 8px at 100% 50%, transparent 8px, var(--paper) 8px);
+  }
+  ::selection{ background: var(--wheat); color: var(--ink); }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- Top bar -->
+<header class="border-b-2 border-[#D8CBAE] bg-[--paper]">
+  <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:var(--leaf)">
+        <i class="fa-solid fa-wheat-awn" style="color:#FBF7EE"></i>
+      </div>
+      <div class="leading-tight">
+        <p class="font-display font-semibold text-lg">Kisan Kendra</p>
+        <p class="text-xs font-hi" style="color:var(--soil)">स्लॉट बुकिंग डैशबोर्ड</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 text-sm" style="color:var(--soil)">
+      <i class="fa-solid fa-circle-user text-lg"></i>
+      <span class="hidden sm:inline">Ramesh Kumar · Rampur</span>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-5 py-10">
+
+  <p class="uppercase tracking-widest text-xs font-semibold" style="color:var(--soil)">Step 1 of 2</p>
+  <h1 class="font-display text-4xl sm:text-5xl font-semibold mt-2 leading-tight">
+    Apna drop-off <span style="color:var(--leaf)">slot</span> book karein
+  </h1>
+  <p class="mt-3 text-[#5b5147] max-w-lg">Center, tareekh aur samay chunein — hum aapko turant slot confirm kar denge.</p>
+
+  <!-- Center + Date -->
+  <div class="mt-8 grid sm:grid-cols-2 gap-5 max-w-2xl">
+    <div>
+      <label class="block text-sm font-semibold mb-1.5">Procurement Center <span class="font-hi" style="color:var(--soil)">(Nazdeeki Kendra)</span></label>
+      <select id="centerSelect" onchange="renderSlots()" class="field-input w-full rounded-lg px-4 py-3 text-base">
+        <option value="">-- Center chunein --</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-semibold mb-1.5">Drop-off Tareekh <span class="font-hi" style="color:var(--soil)">(Date)</span></label>
+      <input id="dropDate" type="date" onchange="renderSlots()" class="field-input w-full rounded-lg px-4 py-3 text-base font-mono">
+    </div>
+  </div>
+
+  <!-- Selected center info -->
+  <div id="centerInfo" class="hidden mt-6 max-w-2xl rounded-xl p-4 flex items-start gap-3" style="background:var(--leaf-tint); border:2px solid var(--leaf)">
+    <i class="fa-solid fa-location-dot mt-0.5" style="color:var(--leaf)"></i>
+    <p class="text-sm" id="centerInfoText" style="color:var(--leaf-dark)"></p>
+  </div>
+
+  <!-- Slots -->
+  <div id="slotsSection" class="mt-10 hidden">
+    <h2 class="font-display text-2xl font-semibold mb-1">Uplabdh Samay <span class="text-base font-normal font-hi" style="color:var(--soil)">(Available Slots)</span></h2>
+    <p class="text-sm text-[#8a7a5f] mb-5">Ek slot chunein aage badhne ke liye.</p>
+    <div id="slotsGrid" class="grid sm:grid-cols-3 gap-4"></div>
+  </div>
+
+  <p id="emptyHint" class="mt-10 text-sm text-[#8a7a5f] italic">
+    <i class="fa-solid fa-arrow-up mr-1"></i>Slots dekhne ke liye upar center aur tareekh chunein.
+  </p>
+</main>
+
+<!-- Summary modal -->
+<div id="modalBackdrop" class="modal-backdrop fixed inset-0 z-40 flex items-end sm:items-center justify-center p-0 sm:p-5">
+  <div class="modal-panel ticket-edge bg-[--paper] w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl border-2" style="border-color:#D8CBAE;">
+    <div class="p-6 sm:p-7">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display text-xl font-semibold">Booking Summary</h3>
+        <button onclick="closeModal()" class="text-[#8a7a5f] hover:text-[--ink] text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="mt-4 border-t-2 border-dashed border-[#D8CBAE] pt-4 space-y-3 text-sm">
+        <div class="flex justify-between"><span class="text-[#8a7a5f]">Farmer</span><span class="font-semibold">Ramesh Kumar</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]">Center</span><span class="font-semibold text-right" id="sumCenter">—</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]">Tareekh</span><span class="font-semibold font-mono" id="sumDate">—</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]">Samay</span><span class="font-semibold" id="sumSlot">—</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]">Anumanit Kisan</span><span class="font-semibold" id="sumCount">—</span></div>
+      </div>
+      <div class="mt-5 border-t-2 border-dashed border-[#D8CBAE] pt-4">
+        <button onclick="confirmBooking()" class="btn-primary w-full rounded-lg py-3.5 font-semibold text-base shadow-sm">
+          <i class="fa-solid fa-calendar-check mr-2"></i>Book Slot
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SMS toast -->
+<div id="smsToast" class="sms-toast fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-white border-2 rounded-2xl shadow-2xl p-4 flex gap-3 z-50" style="border-color:var(--leaf)">
+  <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:var(--leaf)">
+    <i class="fa-solid fa-comment-sms text-white"></i>
+  </div>
+  <div>
+    <p class="text-xs font-semibold" style="color:var(--leaf)">Kisan Kendra <span class="text-[#8a7a5f] font-normal">· abhi</span></p>
+    <p class="text-sm mt-0.5" id="smsBody">Slot booked successfully. SMS sent.</p>
+  </div>
+</div>
+
+<script>
+  // ---------- dummy data ----------
+  const centers = [
+    { id:'c1', name:'Rampur Mandi Kendra', distance:'2.4 km', address:'Rampur Mandi Road, near Grain Godown' },
+    { id:'c2', name:'Sultanpur Procurement Center', distance:'6.1 km', address:'Sultanpur Bypass, Sector 4' },
+    { id:'c3', name:'Govindpur Kisan Kendra', distance:'9.8 km', address:'Govindpur Chowk, Main Bazaar' },
+  ];
+
+  // dummy capacity per slot (booked/total) — regenerated per date+center combo deterministically
+  const slotTimes = [
+    { key:'9am', label:'9:00 AM', icon:'fa-sun' },
+    { key:'11am', label:'11:00 AM', icon:'fa-cloud-sun' },
+    { key:'2pm', label:'2:00 PM', icon:'fa-cloud' },
+  ];
+
+  let selectedSlot = null;
+
+  function seededRandom(seed){
+    let x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+  function hashStr(s){
+    let h = 0;
+    for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) % 100000; }
+    return h;
+  }
+
+  function initCenters(){
+    const sel = document.getElementById('centerSelect');
+    centers.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = `${c.name} · ${c.distance}`;
+      sel.appendChild(opt);
+    });
+    // default date = today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('dropDate').value = today;
+    document.getElementById('dropDate').min = today;
+  }
+
+  function renderSlots(){
+    const centerId = document.getElementById('centerSelect').value;
+    const date = document.getElementById('dropDate').value;
+    const infoBox = document.getElementById('centerInfo');
+    const slotsSection = document.getElementById('slotsSection');
+    const emptyHint = document.getElementById('emptyHint');
+
+    if(!centerId || !date){
+      infoBox.classList.add('hidden');
+      slotsSection.classList.add('hidden');
+      emptyHint.classList.remove('hidden');
+      return;
+    }
+
+    const center = centers.find(c => c.id === centerId);
+    infoBox.classList.remove('hidden');
+    document.getElementById('centerInfoText').innerHTML =
+      `<span class="font-semibold">${center.name}</span> — ${center.address} (${center.distance})`;
+
+    slotsSection.classList.remove('hidden');
+    emptyHint.classList.add('hidden');
+    selectedSlot = null;
+
+    const grid = document.getElementById('slotsGrid');
+    grid.innerHTML = '';
+
+    slotTimes.forEach(slot => {
+      const seed = hashStr(centerId + date + slot.key);
+      const total = 40;
+      const booked = Math.floor(seededRandom(seed) * total);
+      const pct = Math.min(100, Math.round((booked/total)*100));
+      const isFull = pct >= 95;
+      let barClass = 'capacity-fill';
+      if(pct >= 85) barClass += ' hot';
+      else if(pct >= 60) barClass += ' warn';
+
+      const card = document.createElement('div');
+      card.className = `slot-card rounded-xl p-5 ${isFull ? 'full' : ''}`;
+      card.dataset.key = slot.key;
+      card.innerHTML = `
+        <div class="flex items-center justify-between">
+          <i class="fa-solid ${slot.icon} text-xl" style="color:var(--wheat-dark)"></i>
+          ${isFull ? '<span class="text-xs font-semibold" style="color:var(--alert)">FULL</span>' : ''}
+        </div>
+        <p class="font-display text-2xl font-semibold mt-3">${slot.label}</p>
+        <p class="text-xs text-[#8a7a5f] mt-1">${booked}/${total} kisan booked</p>
+        <div class="capacity-bar h-1.5 rounded-full mt-2 overflow-hidden">
+          <div class="${barClass} h-full rounded-full" style="width:${pct}%"></div>
+        </div>
+      `;
+      if(!isFull){
+        card.addEventListener('click', () => selectSlot(slot, card, booked, total));
+      }
+      grid.appendChild(card);
+    });
+  }
+
+  function selectSlot(slot, cardEl, booked, total){
+    document.querySelectorAll('.slot-card').forEach(c => c.classList.remove('selected'));
+    cardEl.classList.add('selected');
+    selectedSlot = { ...slot, booked, total };
+    openModal();
+  }
+
+  function openModal(){
+    const centerId = document.getElementById('centerSelect').value;
+    const center = centers.find(c => c.id === centerId);
+    const date = document.getElementById('dropDate').value;
+    const prettyDate = new Date(date + 'T00:00:00').toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+
+    document.getElementById('sumCenter').textContent = center.name;
+    document.getElementById('sumDate').textContent = prettyDate;
+    document.getElementById('sumSlot').textContent = selectedSlot.label;
+    document.getElementById('sumCount').textContent = `${selectedSlot.booked}/${selectedSlot.total}`;
+
+    document.getElementById('modalBackdrop').classList.add('show');
+  }
+
+  function closeModal(){
+    document.getElementById('modalBackdrop').classList.remove('show');
+    document.querySelectorAll('.slot-card').forEach(c => c.classList.remove('selected'));
+    selectedSlot = null;
+  }
+
+  function confirmBooking(){
+    if(!selectedSlot) return;
+    const tokenNum = Math.floor(30 + Math.random()*40);
+    document.getElementById('smsBody').textContent =
+      `Slot Booked Successfully! ${selectedSlot.label} par aapka token: ${tokenNum}. SMS sent.`;
+    closeModal();
+    showToast();
+  }
+
+  function showToast(){
+    const toast = document.getElementById('smsToast');
+    toast.classList.add('show');
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 4500);
+  }
+
+  document.getElementById('modalBackdrop').addEventListener('click', (e) => {
+    if(e.target.id === 'modalBackdrop') closeModal();
+  });
+
+  initCenters();
+</script>
+</body>
+</html>

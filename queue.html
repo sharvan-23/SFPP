@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Queue Status — Farmer Procurement Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Karla:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF6EE;
+    --green-deep:#1B4332;
+    --green-mid:#3A6351;
+    --ochre:#C9962C;
+    --ochre-dark:#A67A20;
+    --board:#14171A;
+    --led:#FFB627;
+    --led-dim:#5A3F10;
+  }
+  body{
+    background:var(--paper);
+    font-family:'Karla', sans-serif;
+    color:var(--green-deep);
+  }
+  .font-display{ font-family:'Rajdhani', sans-serif; }
+  .font-mono{ font-family:'JetBrains Mono', monospace; }
+
+  .grain{
+    position:fixed; inset:0; pointer-events:none; opacity:.035; z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .board{
+    background:var(--board);
+    border-radius:14px;
+    box-shadow: 0 30px 60px -20px rgba(20,23,26,.55), inset 0 0 0 1px rgba(255,255,255,.04);
+    position:relative;
+    overflow:hidden;
+  }
+  .board::before{
+    content:"";
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .led-digits{
+    font-family:'Rajdhani', sans-serif;
+    font-weight:700;
+    color:var(--led);
+    text-shadow: 0 0 6px rgba(255,182,39,.65), 0 0 22px rgba(255,182,39,.35);
+    letter-spacing:.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .led-ghost{
+    font-family:'Rajdhani', sans-serif;
+    font-weight:700;
+    color:var(--led-dim);
+    letter-spacing:.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  @keyframes flicker{
+    0%,100%{ opacity:1; }
+    92%{ opacity:1; }
+    93%{ opacity:.55; }
+    94%{ opacity:1; }
+  }
+  .flash{
+    animation: flash-pop .6s ease-out;
+  }
+  @keyframes flash-pop{
+    0%{ transform: scale(1); text-shadow:0 0 6px rgba(255,182,39,.65), 0 0 22px rgba(255,182,39,.35);}
+    30%{ transform: scale(1.035); text-shadow:0 0 16px rgba(255,182,39,1), 0 0 46px rgba(255,182,39,.7);}
+    100%{ transform: scale(1); text-shadow:0 0 6px rgba(255,182,39,.65), 0 0 22px rgba(255,182,39,.35);}
+  }
+  .pulse-dot{
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{
+    0%,100%{ opacity:1; }
+    50%{ opacity:.25; }
+  }
+  .card-line{
+    background-image: linear-gradient(90deg, var(--ochre) 0 8px, transparent 8px);
+    background-size: 16px 2px;
+    background-repeat: repeat-x;
+    background-position: left center;
+  }
+  .progress-fill{
+    transition: width 1s cubic-bezier(.4,0,.2,1);
+  }
+  ::selection{ background: var(--ochre); color:#fff; }
+
+  @media (prefers-reduced-motion: reduce){
+    .flash, .pulse-dot { animation: none !important; }
+  }
+</style>
+</head>
+<body class="min-h-screen relative">
+<div class="grain"></div>
+
+<div class="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 py-8 sm:py-12">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-8 sm:mb-10">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-full flex items-center justify-center" style="background:var(--green-deep);">
+        <i class="fa-solid fa-wheat-awn text-lg" style="color:var(--ochre);"></i>
+      </div>
+      <div>
+        <p class="font-display text-xl font-700 tracking-wide leading-none" style="color:var(--green-deep);">KISAN MANDI</p>
+        <p class="text-[11px] uppercase tracking-[0.18em] text-black/40 mt-0.5">Farmer Procurement Platform</p>
+      </div>
+    </div>
+    <div class="hidden sm:flex items-center gap-2 text-xs font-mono text-black/50">
+      <span class="w-2 h-2 rounded-full bg-emerald-600 pulse-dot"></span>
+      <span id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <!-- Center label -->
+  <div class="flex items-center gap-2 mb-1">
+    <i class="fa-solid fa-location-dot text-xs" style="color:var(--ochre-dark);"></i>
+    <p class="text-xs uppercase tracking-[0.16em] text-black/45">Sardar Patel Procurement Center — Gate 2</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr,1.15fr] gap-5 sm:gap-6">
+
+    <!-- LEFT: Farmer token + waiting time -->
+    <div class="flex flex-col gap-5">
+
+      <!-- Your token card -->
+      <div class="bg-white rounded-2xl p-6 sm:p-7 shadow-sm card-line" style="border:1px solid rgba(27,67,50,0.08);">
+        <p class="text-xs uppercase tracking-[0.16em] text-black/40 mb-3">Your Token Number</p>
+        <div class="flex items-end justify-between">
+          <span id="myToken" class="font-display font-700 leading-none" style="font-size:4.4rem; color:var(--green-deep);">45</span>
+          <div class="text-right pb-2">
+            <p class="text-sm font-semibold" style="color:var(--green-deep);">Ram Prakash</p>
+            <p class="text-xs text-black/45 font-mono">Wheat · 42 Bags</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Waiting time -->
+      <div class="bg-white rounded-2xl p-6 sm:p-7 shadow-sm" style="border:1px solid rgba(27,67,50,0.08);">
+        <p class="text-xs uppercase tracking-[0.16em] text-black/40 mb-3">Estimated Waiting Time</p>
+        <div class="flex items-baseline gap-2 mb-4">
+          <span id="waitMinutes" class="font-display font-700 text-4xl" style="color:var(--ochre-dark);">15</span>
+          <span class="text-sm text-black/50 font-medium">minutes</span>
+        </div>
+        <div class="w-full h-2 rounded-full bg-black/5 overflow-hidden">
+          <div id="waitBar" class="h-full rounded-full progress-fill" style="width:0%; background:linear-gradient(90deg, var(--ochre-dark), var(--ochre));"></div>
+        </div>
+        <p class="text-[11px] text-black/40 mt-3 leading-relaxed">Based on ~2.5 min average processing time per token ahead of you.</p>
+      </div>
+
+      <!-- Tip -->
+      <div class="rounded-2xl px-5 py-4 flex items-start gap-3" style="background:rgba(27,67,50,0.05);">
+        <i class="fa-solid fa-circle-info mt-0.5 text-sm" style="color:var(--green-mid);"></i>
+        <p class="text-xs leading-relaxed text-black/60">Stay near Gate 2. This board updates on its own — no need to refresh the page.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: Live board -->
+    <div class="board p-6 sm:p-9 flex flex-col justify-between min-h-[340px] sm:min-h-[420px]">
+      <div class="relative z-10 flex items-center justify-between">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em]" style="color:var(--led-dim);">Currently Serving</p>
+        <div class="flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background:var(--led);"></span>
+          <span class="font-mono text-[10px] uppercase tracking-[0.15em]" style="color:var(--led-dim);">Live</span>
+        </div>
+      </div>
+
+      <div class="relative z-10 text-center my-6 sm:my-8">
+        <div id="servingDigits" class="led-digits text-[6.5rem] sm:text-[9rem] leading-none">042</div>
+        <p class="font-mono text-[11px] tracking-[0.2em] mt-2" style="color:var(--led-dim);">TOKEN NUMBER</p>
+      </div>
+
+      <div class="relative z-10 flex items-center justify-between border-t pt-5" style="border-color:rgba(255,255,255,.06);">
+        <div>
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em]" style="color:var(--led-dim);">Next Up</p>
+          <p id="nextToken" class="led-digits text-2xl mt-1">043</p>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-[10px] uppercase tracking-[0.15em]" style="color:var(--led-dim);">Tokens Ahead Of You</p>
+          <p id="tokensAhead" class="led-digits text-2xl mt-1">03</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-8 text-center">
+    <p class="text-[11px] text-black/35">Simulation: serving token advances automatically every 5 seconds.</p>
+  </footer>
+</div>
+
+<script>
+  // ---- Config / dummy state ----
+  const MY_TOKEN = 45;
+  let currentServing = 42;
+  const AVG_MIN_PER_TOKEN = 2.5;
+
+  const servingEl = document.getElementById('servingDigits');
+  const nextEl = document.getElementById('nextToken');
+  const aheadEl = document.getElementById('tokensAhead');
+  const waitMinEl = document.getElementById('waitMinutes');
+  const waitBarEl = document.getElementById('waitBar');
+  const myTokenEl = document.getElementById('myToken');
+  const clockEl = document.getElementById('clock');
+
+  function pad3(n){ return String(n).padStart(3,'0'); }
+  function pad2(n){ return String(n).padStart(2,'0'); }
+
+  function render(){
+    servingEl.textContent = pad3(currentServing);
+    nextEl.textContent = pad3(currentServing + 1);
+
+    const ahead = Math.max(MY_TOKEN - currentServing - 1, 0);
+    aheadEl.textContent = pad2(ahead);
+
+    const waitMin = Math.max(Math.round(ahead * AVG_MIN_PER_TOKEN), 0);
+    waitMinEl.textContent = waitMin;
+
+    const totalAheadAtStart = MY_TOKEN - 42; // initial gap for progress bar reference
+    const progressed = totalAheadAtStart > 0
+      ? Math.min(((totalAheadAtStart - ahead) / totalAheadAtStart) * 100, 100)
+      : 100;
+    waitBarEl.style.width = progressed + '%';
+
+    if (currentServing >= MY_TOKEN){
+      servingEl.classList.add('flash');
+      waitMinEl.textContent = 0;
+    }
+  }
+
+  function tick(){
+    if (currentServing < MY_TOKEN + 1){
+      currentServing += 1;
+      servingEl.classList.remove('flash');
+      void servingEl.offsetWidth; // restart animation
+      servingEl.classList.add('flash');
+      render();
+    }
+  }
+
+  function updateClock(){
+    const now = new Date();
+    clockEl.textContent = now.toLocaleTimeString('en-IN', { hour12:false });
+  }
+
+  render();
+  updateClock();
+  setInterval(tick, 5000);
+  setInterval(updateClock, 1000);
+</script>
+</body>
+</html>
