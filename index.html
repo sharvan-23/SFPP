@@ -291,6 +291,7 @@
 
   var WELCOME_MESSAGE = 'नमस्ते किसान भाई। आप नई फसल बेचना चाहते हैं, या अपना टोकन नंबर देखना चाहते हैं? माइक दबाकर बोलें।';
 
+  // --- SARE PAGES KE KEYWORDS (Registration & Other Pages) ---
   var SELL_KEYWORDS = ['बेचना', 'फसल', 'book', 'bechna', 'रजिस्ट्रेशन', 'पंजीकरण', 'register', 'registration', 'बेचनी'];
   var TOKEN_KEYWORDS = ['नंबर', 'टोकन', 'number', 'token', 'कतार', 'queue', 'लाइन'];
   var TRACK_KEYWORDS = ['रसीद', 'पैसे', 'स्टेटस', 'ट्रैक', 'receipt', 'payment', 'track', 'status', 'पर्ची', 'ट्रैकिंग'];
@@ -356,7 +357,7 @@
     }
 
     if (matchesAny(transcript, TOKEN_KEYWORDS)){
-      speak('आपको कतार पेज पर ले जाया जा रहा है');
+      speak('आपको कतार पेज पर le جایا जा raha hai');
       goToPage('queue.html');
     } else if (matchesAny(transcript, TRACK_KEYWORDS)){
       speak('आपकी रसीद और पेमेंट का स्टेटस पेज खुल रहा है');
@@ -370,7 +371,7 @@
     } else {
       setState('idle');
       tapHint.textContent = 'माइक दबाकर बोलें';
-      speak('माफ़ कीजिए, समझ नहीं पाया। कृपया "टोकन", "रसीद", या "फसल बेचना" बोलें।');
+      speak('माफ़ कीजिए, समझ नहीं पाया। कृपया "टोकन", "रसीद", या "रजिस्ट्रेशन" बोलें।');
     }
   }
 
