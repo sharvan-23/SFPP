@@ -297,54 +297,6 @@
   </footer>
 
 <script>
-  // --- 1. SARE PAGES KE KEYWORDS (DICTIONARY) ---
-  var SELL_KEYWORDS = ['बेचना', 'फसल', 'book', 'bechna', 'रजिस्ट्रेशन', 'पंजीकरण', 'register', 'registration', 'बेचनी'];
-  var TOKEN_KEYWORDS = ['नंबर', 'टोकन', 'number', 'token', 'कतार', 'queue', 'लाइन'];
-  var TRACK_KEYWORDS = ['रसीद', 'पैसे', 'स्टेटस', 'ट्रैक', 'receipt', 'payment', 'track', 'status', 'पर्ची', 'ट्रैकिंग'];
-  var FORM_KEYWORDS = ['फॉर्म', 'लिख', 'form', 'type', 'मैनुअल'];
-
-  function normalize(str){
-    return (str || '').toLowerCase();
-  }
-
-  function matchesAny(transcript, keywords){
-    var lower = normalize(transcript);
-    return keywords.some(function(k){ return lower.indexOf(normalize(k)) !== -1; });
-  }
-
-  // --- 2. AI SMART ROUTER (KAUNSI AWAAZ PAR KAUNSA PAGE) ---
-  function handleTranscript(transcript){
-    transcriptText.textContent = 'आपने कहा: "' + transcript + '"';
-    setState('thinking');
-    tapHint.textContent = 'समझ रहे हैं...';
-
-    if (matchesAny(transcript, TOKEN_KEYWORDS)){
-      // Kisaan ne Token/Queue manga
-      speak('आपको कतार पेज पर ले जाया जा रहा है', function(){
-        window.location.href = 'queue.html';
-      });
-    } else if (matchesAny(transcript, TRACK_KEYWORDS)){
-      // Kisaan ne Payment/Status manga
-      speak('आपकी रसीद और पेमेंट का स्टेटस पेज खुल रहा है', function(){
-        window.location.href = 'tracking.html';
-      });
-    } else if (matchesAny(transcript, FORM_KEYWORDS)){
-      // Kisaan ne Form bharne ko kaha
-      speak('लिखकर फॉर्म भरने वाला पेज खुल रहा है', function(){
-        window.location.href = 'manual-login.html';
-      });
-    } else if (matchesAny(transcript, SELL_KEYWORDS)){
-      // Kisaan ne Fasal bechne ya Registration ko kaha
-      speak('ठीक है, फसल बेचने के लिए आगे बढ़ते हैं', function(){
-        window.location.href = 'visual-login.html';
-      });
-    } else {
-      // Agar AI ko kuch samajh nahi aaya
-      setState('idle');
-      tapHint.textContent = 'माइक दबाकर बोलें';
-      speak('माफ़ कीजिए, समझ नहीं पाया। कृपया "टोकन", "रसीद", या "फसल बेचना" बोलें।');
-    }
-  }
 (function(){
   "use strict";
 
@@ -362,8 +314,12 @@
   var isListening = false;
 
   var WELCOME_MESSAGE = 'नमस्ते किसान भाई। आप नई फसल बेचना चाहते हैं, या अपना टोकन नंबर देखना चाहते हैं? माइक दबाकर बोलें।';
-  var TOKEN_KEYWORDS = ['नंबर', 'टोकन', 'number', 'token'];
-  var SELL_KEYWORDS = ['बेचना', 'फसल', 'book', 'bechna'];
+
+  // --- 1. SARE PAGES KE KEYWORDS (DICTIONARY) ---
+  var SELL_KEYWORDS = ['बेचना', 'फसल', 'book', 'bechna', 'रजिस्ट्रेशन', 'पंजीकरण', 'register', 'registration', 'बेचनी'];
+  var TOKEN_KEYWORDS = ['नंबर', 'टोकन', 'number', 'token', 'कतार', 'queue', 'लाइन'];
+  var TRACK_KEYWORDS = ['रसीद', 'पैसे', 'स्टेटस', 'ट्रैक', 'receipt', 'payment', 'track', 'status', 'पर्ची', 'ट्रैकिंग'];
+  var FORM_KEYWORDS = ['फॉर्म', 'लिख', 'form', 'type', 'मैनुअल'];
 
   function setState(state){
     micWrap.classList.remove('idle', 'listening', 'thinking');
@@ -412,7 +368,6 @@
     }
     utter.onend = finish;
     utter.onerror = finish;
-    // Fallback in case the browser never fires end/error
     setTimeout(finish, Math.max(2500, text.length * 90));
     synth.speak(utter);
   }
@@ -426,6 +381,7 @@
     return keywords.some(function(k){ return lower.indexOf(normalize(k)) !== -1; });
   }
 
+  // --- 2. AI SMART ROUTER (KAUNSI AWAAZ PAR KAUNSA PAGE) ---
   function handleTranscript(transcript){
     transcriptText.textContent = 'आपने कहा: "' + transcript + '"';
     setState('thinking');
@@ -435,6 +391,14 @@
       speak('आपको कतार पेज पर ले जाया जा रहा है', function(){
         window.location.href = 'queue.html';
       });
+    } else if (matchesAny(transcript, TRACK_KEYWORDS)){
+      speak('आपकी रसीद और पेमेंट का स्टेटस पेज खुल रहा है', function(){
+        window.location.href = 'tracking.html';
+      });
+    } else if (matchesAny(transcript, FORM_KEYWORDS)){
+      speak('लिखकर फॉर्म भरने वाला पेज खुल रहा है', function(){
+        window.location.href = 'manual-login.html';
+      });
     } else if (matchesAny(transcript, SELL_KEYWORDS)){
       speak('ठीक है, फसल बेचने के लिए आगे बढ़ते हैं', function(){
         window.location.href = 'visual-login.html';
@@ -442,7 +406,7 @@
     } else {
       setState('idle');
       tapHint.textContent = 'माइक दबाकर बोलें';
-      speak('माफ़ कीजिए, समझ नहीं पाया। कृपया "टोकन नंबर" या "फसल बेचना" बोलें।');
+      speak('माफ़ कीजिए, समझ नहीं पाया। कृपया "टोकन", "रसीद", या "फसल बेचना" बोलें।');
     }
   }
 
@@ -453,7 +417,6 @@
     try {
       recognition.start();
     } catch (err){
-      // start() can throw if already started; ignore.
     }
   }
 
