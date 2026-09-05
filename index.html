@@ -6,181 +6,220 @@
 <title>किसान सेवा — स्वागत है</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
-<script>
-(function(){
-  "use strict";
-
-  var assistantText = document.getElementById('assistant-text');
-  var tapHint = document.getElementById('tap-hint');
-  var transcriptText = document.getElementById('transcript-text');
-  var micBtn = document.getElementById('mic-btn');
-  var micWrap = document.getElementById('mic-wrap');
-  var unsupportedBanner = document.getElementById('unsupported-banner');
-
-  var SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var synth = window.speechSynthesis;
-  var recognition = null;
-  var hindiVoice = null;
-  var isListening = false;
-
-  var WELCOME_MESSAGE = 'नमस्ते किसान भाई। आप नई फसल बेचना चाहते हैं, या अपना टोकन नंबर देखना चाहते हैं? माइक दबाकर बोलें।';
-
-  // --- 1. SARE PAGES KE KEYWORDS (DICTIONARY) ---
-  var SELL_KEYWORDS = ['बेचना', 'फसल', 'book', 'bechna', 'रजिस्ट्रेशन', 'पंजीकरण', 'register', 'registration', 'बेचनी'];
-  var TOKEN_KEYWORDS = ['नंबर', 'टोकन', 'number', 'token', 'कतार', 'queue', 'लाइन'];
-  var TRACK_KEYWORDS = ['रसीद', 'पैसे', 'स्टेटस', 'ट्रैक', 'receipt', 'payment', 'track', 'status', 'पर्ची', 'ट्रैकिंग'];
-  var FORM_KEYWORDS = ['फॉर्म', 'लिख', 'form', 'type', 'मैनुअल'];
-
-  function setState(state){
-    micWrap.classList.remove('idle', 'listening', 'thinking');
-    micBtn.classList.remove('listening', 'thinking');
-    if (state === 'idle'){
-      micWrap.classList.add('idle');
-    } else if (state === 'listening'){
-      micWrap.classList.add('listening');
-      micBtn.classList.add('listening');
-    } else if (state === 'thinking'){
-      micWrap.classList.add('thinking');
-      micBtn.classList.add('thinking');
-    }
+<style>
+  :root{
+    --sky-top:#274B63;
+    --sky-mid:#3C7A6B;
+    --field:#1F3D2C;
+    --field-dark:#152A1E;
+    --sun:#F2B441;
+    --sun-soft:#F7CE7A;
+    --cream:#FBF4E4;
+    --cream-dim:#D9CDAE;
+    --leaf:#5C9A63;
+    --alert:#C1440E;
+    --ink:#122016;
+    --focus:#F2B441;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    font-family:'Hind',sans-serif;
+    color:var(--cream);
+    overflow:hidden;
+  }
+  body{
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    background:linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 46%, var(--field) 47%, var(--field-dark) 100%);
   }
 
-  function pickHindiVoice(){
-    if (!synth) return;
-    var voices = synth.getVoices();
-    hindiVoice = voices.find(function(v){ return v.lang === 'hi-IN'; }) ||
-                 voices.find(function(v){ return v.lang && v.lang.indexOf('hi') === 0; }) ||
-                 null;
+  .sun{
+    position:absolute;
+    top:9%;
+    right:12%;
+    width:92px;
+    height:92px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--sun-soft), var(--sun) 70%);
+    box-shadow:0 0 60px 18px rgba(242,180,65,0.35);
   }
 
-  if (synth){
-    pickHindiVoice();
-    synth.onvoiceschanged = pickHindiVoice;
+  .field-lines{
+    position:absolute;
+    left:0;
+    right:0;
+    top:46%;
+    height:54%;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .field-lines svg{width:100%;height:100%;display:block;}
+
+  header{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    padding:34px 24px 8px;
+  }
+  .brand{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:0.2px;
+    color:var(--sun-soft);
+    margin:0 0 4px;
+  }
+  .brand span{color:var(--cream);}
+
+  main{
+    position:relative;
+    z-index:2;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    padding:0 24px;
+    text-align:center;
+    gap:28px;
   }
 
-  function speak(text){
-    assistantText.textContent = text;
-    if (!synth) return;
-    synth.cancel();
-    var utter = new SpeechSynthesisUtterance(text);
-    utter.lang = 'hi-IN';
-    if (hindiVoice) utter.voice = hindiVoice;
-    utter.rate = 0.95;
-    utter.pitch = 1;
-    synth.speak(utter);
+  .speech-card{
+    max-width:520px;
+    background:rgba(18,32,22,0.55);
+    border:1px solid rgba(251,244,228,0.18);
+    backdrop-filter:blur(6px);
+    border-radius:18px;
+    padding:20px 24px;
+    min-height:96px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .speech-card p{
+    margin:0;
+    font-size:20px;
+    line-height:1.6;
+    font-weight:500;
+    color:var(--cream);
   }
 
-  function normalize(str){
-    return (str || '').toLowerCase();
+  .mic-wrap{
+    position:relative;
+    width:220px;
+    height:220px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .ring{
+    position:absolute;
+    border-radius:50%;
+    border:2px solid var(--sun);
+    opacity:0;
+    inset:0;
+  }
+  .mic-wrap.idle .ring{animation:pulse-ring 2.6s ease-out infinite;}
+  .mic-wrap.idle .ring:nth-child(2){animation-delay:0.9s;}
+  .mic-wrap.idle .ring:nth-child(3){animation-delay:1.8s;}
+  @keyframes pulse-ring{
+    0%{transform:scale(0.72);opacity:0.55;}
+    100%{transform:scale(1.55);opacity:0;}
+  }
+  .mic-wrap.listening .ring{
+    border-color:var(--alert);
+    animation:pulse-ring-fast 1.1s ease-out infinite;
+  }
+  .mic-wrap.listening .ring:nth-child(2){animation-delay:0.35s;}
+  .mic-wrap.listening .ring:nth-child(3){animation-delay:0.7s;}
+  @keyframes pulse-ring-fast{
+    0%{transform:scale(0.8);opacity:0.65;}
+    100%{transform:scale(1.4);opacity:0;}
   }
 
-  function matchesAny(transcript, keywords){
-    var lower = normalize(transcript);
-    return keywords.some(function(k){ return lower.indexOf(normalize(k)) !== -1; });
+  #mic-btn{
+    position:relative;
+    z-index:2;
+    width:148px;
+    height:148px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    background:radial-gradient(circle at 32% 28%, var(--sun-soft), var(--sun) 65%);
+    box-shadow:0 14px 34px rgba(0,0,0,0.35), inset 0 -6px 14px rgba(0,0,0,0.15);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform 0.18s ease, background 0.3s ease, box-shadow 0.3s ease;
+  }
+  #mic-btn:active{transform:scale(0.94);}
+  #mic-btn svg{width:60px;height:60px;}
+  #mic-btn.listening{
+    background:radial-gradient(circle at 32% 28%, #E9704F, var(--alert) 68%);
+  }
+  #mic-btn.thinking{
+    background:radial-gradient(circle at 32% 28%, #8FC79A, var(--leaf) 68%);
+  }
+  #mic-btn:disabled{cursor:not-allowed;filter:saturate(0.5);}
+
+  .tap-hint{
+    font-size:15px;
+    color:var(--cream-dim);
+    font-weight:500;
+    min-height:20px;
   }
 
-  // --- 2. AI SMART ROUTER (CHROME FIX KE SATH) ---
-  function handleTranscript(transcript){
-    transcriptText.textContent = 'आपने कहा: "' + transcript + '"';
-    setState('thinking');
-    tapHint.textContent = 'समझ रहे हैं...';
-
-    // GUARANTEED REDIRECT (Ye page 100% badlega)
-    function goToPage(url) {
-      setTimeout(function() {
-        window.location.href = url;
-      }, 2000);
-    }
-
-    if (matchesAny(transcript, TOKEN_KEYWORDS)){
-      speak('आपको कतार पेज पर ले जाया जा रहा है');
-      goToPage('queue.html');
-    } else if (matchesAny(transcript, TRACK_KEYWORDS)){
-      speak('आपकी रसीद और पेमेंट का स्टेटस पेज खुल रहा है');
-      goToPage('tracking.html');
-    } else if (matchesAny(transcript, FORM_KEYWORDS)){
-      speak('लिखकर फॉर्म भरने वाला पेज खुल रहा है');
-      goToPage('manual-login.html');
-    } else if (matchesAny(transcript, SELL_KEYWORDS)){
-      speak('ठीक है, फसल बेचने के लिए आगे बढ़ते हैं');
-      goToPage('visual-login.html');
-    } else {
-      setState('idle');
-      tapHint.textContent = 'माइक दबाकर बोलें';
-      speak('माफ़ कीजिए, समझ नहीं पाया। कृपया "टोकन", "रसीद", या "फसल बेचना" बोलें।');
-    }
+  .transcript{
+    font-size:15px;
+    color:var(--sun-soft);
+    font-weight:500;
+    min-height:20px;
   }
 
-  function startListening(){
-    if (!recognition || isListening) return;
-    if (synth) synth.cancel();
-    transcriptText.textContent = '';
-    try {
-      recognition.start();
-    } catch (err){}
+  footer{
+    position:relative;
+    z-index:2;
+    width:100%;
+    padding:20px 24px 34px;
+    display:flex;
+    justify-content:center;
   }
-
-  function initRecognition(){
-    if (!SpeechRecognitionAPI){
-      unsupportedBanner.style.display = 'block';
-      micBtn.disabled = true;
-      tapHint.textContent = 'नीचे बटन से फॉर्म भरें';
-      return;
-    }
-
-    recognition = new SpeechRecognitionAPI();
-    recognition.lang = 'hi-IN';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = function(){
-      isListening = true;
-      setState('listening');
-      tapHint.textContent = 'सुन रहे हैं... बोलिए';
-      assistantText.textContent = 'सुन रहा हूँ...';
-    };
-
-    recognition.onresult = function(event){
-      var transcript = event.results && event.results[0] && event.results[0][0]
-        ? event.results[0][0].transcript
-        : '';
-      handleTranscript(transcript);
-    };
-
-    recognition.onerror = function(event){
-      isListening = false;
-      setState('idle');
-      if (event.error === 'no-speech'){
-        tapHint.textContent = 'कुछ सुनाई नहीं दिया, फिर कोशिश करें';
-        speak('कुछ सुनाई नहीं दिया। कृपया फिर से माइक दबाएँ।');
-      } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed'){
-        tapHint.textContent = 'माइक की अनुमति दें';
-        assistantText.textContent = 'कृपया ब्राउज़र में माइक की अनुमति दें, या नीचे बटन से फॉर्म भरें।';
-      } else {
-        tapHint.textContent = 'माइक दबाकर बोलें';
-      }
-    };
-
-    recognition.onend = function(){
-      isListening = false;
-      if (!micBtn.classList.contains('thinking')){
-        setState('idle');
-      }
-    };
-
-    micBtn.addEventListener('click', startListening);
+  .manual-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    color:var(--ink);
+    background:var(--cream);
+    font-weight:600;
+    font-size:17px;
+    padding:14px 26px;
+    border-radius:999px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.25);
   }
+  .manual-btn svg{width:20px;height:20px;flex:none;}
 
-  initRecognition();
-
-  window.addEventListener('load', function(){
-    setState('idle');
-    speak(WELCOME_MESSAGE);
-  });
-
-})();
-</script>
+  .unsupported-banner{
+    position:relative;
+    z-index:2;
+    margin:0 24px;
+    padding:12px 16px;
+    background:rgba(193,68,14,0.85);
+    border-radius:12px;
+    font-size:14px;
+    text-align:center;
+    display:none;
+  }
+</style>
 </head>
 <body>
 
@@ -252,7 +291,6 @@
 
   var WELCOME_MESSAGE = 'नमस्ते किसान भाई। आप नई फसल बेचना चाहते हैं, या अपना टोकन नंबर देखना चाहते हैं? माइक दबाकर बोलें।';
 
-  // --- 1. SARE PAGES KE KEYWORDS (DICTIONARY) ---
   var SELL_KEYWORDS = ['बेचना', 'फसल', 'book', 'bechna', 'रजिस्ट्रेशन', 'पंजीकरण', 'register', 'registration', 'बेचनी'];
   var TOKEN_KEYWORDS = ['नंबर', 'टोकन', 'number', 'token', 'कतार', 'queue', 'लाइन'];
   var TRACK_KEYWORDS = ['रसीद', 'पैसे', 'स्टेटस', 'ट्रैक', 'receipt', 'payment', 'track', 'status', 'पर्ची', 'ट्रैकिंग'];
@@ -285,27 +323,15 @@
     synth.onvoiceschanged = pickHindiVoice;
   }
 
-  function speak(text, onDone){
+  function speak(text){
     assistantText.textContent = text;
-    if (!synth){
-      if (onDone) setTimeout(onDone, 400);
-      return;
-    }
+    if (!synth) return;
     synth.cancel();
     var utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'hi-IN';
     if (hindiVoice) utter.voice = hindiVoice;
     utter.rate = 0.95;
     utter.pitch = 1;
-    var finished = false;
-    function finish(){
-      if (finished) return;
-      finished = true;
-      if (onDone) onDone();
-    }
-    utter.onend = finish;
-    utter.onerror = finish;
-    setTimeout(finish, Math.max(2500, text.length * 90));
     synth.speak(utter);
   }
 
@@ -318,28 +344,29 @@
     return keywords.some(function(k){ return lower.indexOf(normalize(k)) !== -1; });
   }
 
-  // --- 2. AI SMART ROUTER (KAUNSI AWAAZ PAR KAUNSA PAGE) ---
   function handleTranscript(transcript){
     transcriptText.textContent = 'आपने कहा: "' + transcript + '"';
     setState('thinking');
     tapHint.textContent = 'समझ रहे हैं...';
 
+    function goToPage(url) {
+      setTimeout(function() {
+        window.location.href = url;
+      }, 1500);
+    }
+
     if (matchesAny(transcript, TOKEN_KEYWORDS)){
-      speak('आपको कतार पेज पर ले जाया जा रहा है', function(){
-        window.location.href = 'queue.html';
-      });
+      speak('आपको कतार पेज पर ले जाया जा रहा है');
+      goToPage('queue.html');
     } else if (matchesAny(transcript, TRACK_KEYWORDS)){
-      speak('आपकी रसीद और पेमेंट का स्टेटस पेज खुल रहा है', function(){
-        window.location.href = 'tracking.html';
-      });
+      speak('आपकी रसीद और पेमेंट का स्टेटस पेज खुल रहा है');
+      goToPage('tracking.html');
     } else if (matchesAny(transcript, FORM_KEYWORDS)){
-      speak('लिखकर फॉर्म भरने वाला पेज खुल रहा है', function(){
-        window.location.href = 'manual-login.html';
-      });
+      speak('लिखकर फॉर्म भरने वाला पेज खुल रहा है');
+      goToPage('manual-login.html');
     } else if (matchesAny(transcript, SELL_KEYWORDS)){
-      speak('ठीक है, फसल बेचने के लिए आगे बढ़ते हैं', function(){
-        window.location.href = 'visual-login.html';
-      });
+      speak('ठीक है, फसल बेचने के लिए आगे बढ़ते हैं');
+      goToPage('visual-login.html');
     } else {
       setState('idle');
       tapHint.textContent = 'माइक दबाकर बोलें';
@@ -353,8 +380,7 @@
     transcriptText.textContent = '';
     try {
       recognition.start();
-    } catch (err){
-    }
+    } catch (err){}
   }
 
   function initRecognition(){
@@ -391,9 +417,6 @@
       if (event.error === 'no-speech'){
         tapHint.textContent = 'कुछ सुनाई नहीं दिया, फिर कोशिश करें';
         speak('कुछ सुनाई नहीं दिया। कृपया फिर से माइक दबाएँ।');
-      } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed'){
-        tapHint.textContent = 'माइक की अनुमति दें';
-        assistantText.textContent = 'कृपया ब्राउज़र में माइक की अनुमति दें, या नीचे बटन से फॉर्म भरें।';
       } else {
         tapHint.textContent = 'माइक दबाकर बोलें';
       }
