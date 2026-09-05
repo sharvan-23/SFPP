@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KISAN MANDI | Visual Login</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Karla:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF6EE;
+    --green-deep:#1B4332;
+    --green-deep-dark:#123024;
+    --green-tint:#E4ECE7;
+    --ochre:#C9962C;
+    --ochre-dark:#A87A1E;
+    --ochre-tint:#F7EBD4;
+    --ink:#241F1A;
+    --muted:#6B6355;
+  }
+  html,body{ height:100%; }
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family:'Karla','Noto Sans Devanagari',sans-serif;
+    min-height:100svh;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .font-display{ font-family:'Rajdhani','Noto Sans Devanagari',sans-serif; letter-spacing:.02em; }
+  .font-hi-lg{ font-family:'Rajdhani','Noto Sans Devanagari',sans-serif; }
+
+  /* ---------- subtle grain overlay ---------- */
+  .grain{
+    position:fixed; inset:0; z-index:30; pointer-events:none;
+    opacity:.05; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size:140px 140px;
+  }
+
+  /* ---------- header ---------- */
+  .brand-icon{
+    background: var(--green-deep);
+    box-shadow: 0 6px 16px -6px rgba(27,67,50,0.5);
+  }
+
+  /* ---------- voice instruction ---------- */
+  .voice-ring{
+    background: radial-gradient(circle, var(--ochre-tint) 0%, transparent 70%);
+  }
+  @keyframes pulse-ring{
+    0%{ box-shadow:0 0 0 0 rgba(201,150,44,0.45); }
+    70%{ box-shadow:0 0 0 22px rgba(201,150,44,0); }
+    100%{ box-shadow:0 0 0 0 rgba(201,150,44,0); }
+  }
+  .voice-btn{
+    background: var(--ochre);
+    color: var(--paper);
+    animation: pulse-ring 12s ease-out infinite;
+    transition: transform .15s ease;
+  }
+  .voice-btn:active{ transform: scale(.92); }
+
+  /* ---------- giant cards ---------- */
+  .giant-card{
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .18s ease, box-shadow .18s ease;
+    box-shadow: 0 14px 30px -14px rgba(27,67,50,0.35);
+  }
+  .giant-card:active{ transform: scale(.97); }
+  @media (hover:hover){
+    .giant-card:hover{ transform: translateY(-6px); box-shadow: 0 22px 40px -16px rgba(27,67,50,0.4); }
+  }
+  .card-green{ background: linear-gradient(155deg, var(--green-deep) 0%, var(--green-deep-dark) 100%); color: var(--paper); }
+  .card-ochre{ background: linear-gradient(155deg, var(--ochre) 0%, var(--ochre-dark) 100%); color: var(--paper); }
+
+  .card-icon-wrap{
+    background: rgba(255,255,255,0.14);
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  @keyframes icon-breathe{
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.06); }
+  }
+  .icon-breathe{ animation: icon-breathe 2.6s ease-in-out infinite; }
+
+  /* ---------- manual login link ---------- */
+  .manual-link{
+    color: var(--muted);
+    transition: color .15s ease, background .15s ease;
+  }
+  .manual-link:active{ background: var(--green-tint); color: var(--green-deep); }
+
+  /* ---------- scanning overlay ---------- */
+  .scan-overlay{
+    position:fixed; inset:0; z-index:50;
+    background: rgba(18,48,36,0.96);
+    display:flex; opacity:0; pointer-events:none;
+    transition: opacity .3s ease;
+  }
+  .scan-overlay.show{ opacity:1; pointer-events:auto; }
+
+  .scan-frame{
+    position:relative; overflow:hidden;
+    border: 3px solid rgba(250,246,238,0.35);
+  }
+  .scan-line{
+    position:absolute; left:0; right:0; height:4px;
+    background: linear-gradient(90deg, transparent, var(--ochre) 50%, transparent);
+    box-shadow: 0 0 16px 2px rgba(201,150,44,0.8);
+    animation: scan-move 1.6s ease-in-out infinite;
+  }
+  @keyframes scan-move{
+    0%{ top:4%; }
+    50%{ top:92%; }
+    100%{ top:4%; }
+  }
+  @keyframes overlay-fade-pulse{
+    0%,100%{ opacity:1; } 50%{ opacity:.55; }
+  }
+  .scan-text{ animation: overlay-fade-pulse 1.2s ease-in-out infinite; }
+
+  ::selection{ background: var(--ochre); color: var(--paper); }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+<div class="grain"></div>
+
+<!-- Header -->
+<header class="relative z-10 px-5 sm:px-8 py-5 flex items-center">
+  <div class="flex items-center gap-3">
+    <div class="brand-icon w-12 h-12 rounded-full flex items-center justify-center shrink-0">
+      <i class="fa-solid fa-wheat-awn text-xl" style="color:var(--paper)"></i>
+    </div>
+    <div class="leading-tight">
+      <p class="font-display font-bold text-2xl tracking-wide" style="color:var(--green-deep)">KISAN MANDI</p>
+      <p class="text-xs" style="color:var(--muted)">फार्मर प्रोक्योरमेंट प्लेटफॉर्म</p>
+    </div>
+  </div>
+</header>
+
+<!-- Voice instruction area -->
+<section class="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-2 pb-6">
+  <div class="voice-ring w-32 h-32 rounded-full flex items-center justify-center">
+    <button id="voiceBtn" class="voice-btn w-20 h-20 rounded-full flex items-center justify-center shadow-lg" aria-label="सुनें">
+      <i class="fa-solid fa-volume-high text-2xl"></i>
+    </button>
+  </div>
+  <p class="font-hi-lg font-semibold text-3xl sm:text-4xl mt-5 leading-tight" style="color:var(--green-deep)">
+    लॉगिन करने का तरीका चुनें
+  </p>
+  <p class="text-sm mt-1" style="color:var(--muted)">आवाज़ सुनने के लिए ऊपर बटन दबाएं</p>
+</section>
+
+<!-- Giant cards -->
+<main class="relative z-10 flex-1 px-5 sm:px-8 pb-4">
+  <div class="grid sm:grid-cols-2 gap-5 h-full max-w-3xl mx-auto">
+
+    <!-- Card 1: Fingerprint -->
+    <div id="cardFinger" class="giant-card card-green rounded-3xl flex flex-col items-center justify-center text-center p-8 min-h-[38vh] sm:min-h-[48vh]">
+      <div class="card-icon-wrap icon-breathe w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center mb-6">
+        <i class="fa-solid fa-fingerprint text-6xl sm:text-7xl"></i>
+      </div>
+      <p class="font-hi-lg font-bold text-3xl sm:text-4xl">अंगूठा लगाएं</p>
+      <p class="text-sm mt-2 opacity-80">बायोमेट्रिक से लॉगिन करें</p>
+    </div>
+
+    <!-- Card 2: QR / Scan -->
+    <div id="cardScan" class="giant-card card-ochre rounded-3xl flex flex-col items-center justify-center text-center p-8 min-h-[38vh] sm:min-h-[48vh]">
+      <div class="card-icon-wrap icon-breathe w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center mb-6">
+        <i class="fa-solid fa-qrcode text-6xl sm:text-7xl"></i>
+      </div>
+      <p class="font-hi-lg font-bold text-3xl sm:text-4xl">कार्ड स्कैन करें</p>
+      <p class="text-sm mt-2 opacity-80">किसान कार्ड को स्कैन करें</p>
+    </div>
+
+  </div>
+</main>
+
+<!-- Manual login option -->
+<footer class="relative z-10 flex justify-center pb-8 pt-2">
+  <a href="manual-login.html" class="manual-link inline-flex items-center gap-2 rounded-full px-5 py-3 text-base font-semibold">
+    ✍️ लिखकर फॉर्म भरें
+  </a>
+</footer>
+
+<!-- Scanning overlay -->
+<div id="scanOverlay" class="scan-overlay flex-col items-center justify-center text-center px-6">
+  <div id="scanFrame" class="scan-frame w-40 h-40 sm:w-48 sm:h-48 rounded-3xl flex items-center justify-center mb-8">
+    <i id="scanIcon" class="fa-solid fa-fingerprint text-7xl" style="color:var(--ochre)"></i>
+    <div class="scan-line"></div>
+  </div>
+  <p class="scan-text font-hi-lg font-bold text-3xl sm:text-4xl" style="color:var(--paper)">स्कैन हो रहा है...</p>
+  <p class="text-sm mt-2" style="color:#C7D6CC">कृपया प्रतीक्षा करें</p>
+</div>
+
+<script>
+  // ---------- speech helper (Hindi text-to-speech via Web Speech API) ----------
+  function speakHindi(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'hi-IN';
+    utter.rate = 0.95;
+    const voices = window.speechSynthesis.getVoices();
+    const hiVoice = voices.find(v => v.lang === 'hi-IN') || voices.find(v => v.lang && v.lang.startsWith('hi'));
+    if(hiVoice) utter.voice = hiVoice;
+    window.speechSynthesis.speak(utter);
+  }
+
+  // warm up voices list (some browsers load it async)
+  if('speechSynthesis' in window){
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+
+  document.getElementById('voiceBtn').addEventListener('click', () => {
+    speakHindi('लॉगिन करने का तरीका चुनें। अंगूठा लगाने के लिए हरा कार्ड दबाएं। कार्ड स्कैन करने के लिए पीला कार्ड दबाएं।');
+  });
+
+  // ---------- scanning overlay logic ----------
+  const scanOverlay = document.getElementById('scanOverlay');
+  const scanIcon = document.getElementById('scanIcon');
+  const scanFrame = document.getElementById('scanFrame');
+
+  function startScan(iconClass, accentColor){
+    scanIcon.className = `fa-solid ${iconClass} text-7xl`;
+    scanIcon.style.color = accentColor;
+    scanOverlay.classList.add('show');
+    speakHindi('स्कैन हो रहा है, कृपया प्रतीक्षा करें।');
+
+    setTimeout(() => {
+      window.location.href = 'booking.html';
+    }, 3000);
+  }
+
+  document.getElementById('cardFinger').addEventListener('click', () => {
+    startScan('fa-fingerprint', '#1B4332');
+  });
+
+  document.getElementById('cardScan').addEventListener('click', () => {
+    startScan('fa-qrcode', '#C9962C');
+  });
+</script>
+</body>
+</html>
