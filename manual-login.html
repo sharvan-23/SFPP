@@ -108,6 +108,7 @@
     color: var(--leaf);
     background: transparent;
     transition: background .15s ease, color .15s ease;
+    cursor: pointer;
   }
   .lang-toggle:hover, .lang-toggle:focus-visible{
     background: var(--leaf);
@@ -133,7 +134,6 @@
 </head>
 <body class="min-h-screen">
 
-<!-- Top bar -->
 <header class="border-b-2 border-[#D8CBAE] bg-[--paper] sticky top-0 z-50" style="background:var(--paper)">
   <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
     <a href="index.html" class="flex items-center gap-3">
@@ -141,8 +141,8 @@
         <i class="fa-solid fa-wheat-awn text-[--paper]" style="color:#FBF7EE"></i>
       </div>
       <div class="leading-tight">
-        <p class="font-display font-semibold text-lg">Kisan Kendra</p>
-        <p class="text-xs text-[#6B4226] font-hi">किसान उपार्जन मंच</p>
+        <p class="font-display font-semibold text-lg" data-en="Kisan Kendra" data-hi="किसान केंद्र">Kisan Kendra</p>
+        <p class="text-xs text-[#6B4226] font-hi" data-en="Procurement Platform" data-hi="किसान उपार्जन मंच">किसान उपार्जन मंच</p>
       </div>
     </a>
 
@@ -162,7 +162,7 @@
 
   <nav class="border-t border-[#D8CBAE]">
     <ul id="navLinks" class="hidden sm:flex max-w-6xl mx-auto px-5 py-2 gap-1 text-sm font-semibold flex-col sm:flex-row">
-      <li><a href="index.html" class="nav-link active block px-3 py-2 rounded-lg" data-en="Home" data-hi="होम">Home</a></li>
+      <li><a href="index.html" class="nav-link block px-3 py-2 rounded-lg" data-en="Home" data-hi="होम">Home</a></li>
       <li><a href="booking.html" class="nav-link block px-3 py-2 rounded-lg" data-en="Book Slot" data-hi="स्लॉट बुक करें">Book Slot</a></li>
       <li><a href="queue.html" class="nav-link block px-3 py-2 rounded-lg" data-en="Live Queue" data-hi="लाइव कतार">Live Queue</a></li>
       <li><a href="tracking.html" class="nav-link block px-3 py-2 rounded-lg" data-en="Track" data-hi="ट्रैक करें">Track</a></li>
@@ -172,7 +172,6 @@
 
 <main class="max-w-6xl mx-auto px-5 py-10 grid lg:grid-cols-5 gap-10 items-start">
 
-  <!-- Left: form -->
   <section class="lg:col-span-3">
     <p class="uppercase tracking-widest text-xs font-semibold text-[--soil]" style="color:var(--soil)" data-en="Season 2026 · Registration Open" data-hi="सीज़न 2026 · पंजीकरण खुला है">Season 2026 · Registration Open</p>
     <h1 class="font-display text-4xl sm:text-5xl font-semibold mt-2 leading-tight" data-en='Register to sell your <span style="color:var(--leaf)">harvest.</span>' data-hi='अपनी <span style="color:var(--leaf)">फसल</span> बेचने के लिए पंजीकरण करें।'>
@@ -180,7 +179,6 @@
     </h1>
     <p class="mt-3 text-[#5b5147] max-w-lg" data-en="Register once and book your slot directly at the procurement center — no need to stand in line." data-hi="एक बार पंजीकरण करके आप सीधे खरीद केंद्र पर स्लॉट बुक कर सकते हैं — बिना कतार में खड़े हुए।">Register once and book your slot directly at the procurement center — no need to stand in line.</p>
 
-    <!-- toggle -->
     <div class="mt-8 inline-flex rounded-full border-2 border-[#D8CBAE] p-1 bg-white/60">
       <button id="tabRegister" onclick="switchTab('register')" class="toggle-tab active px-6 py-2 rounded-full text-sm font-semibold transition">
         <i class="fa-solid fa-user-plus mr-1.5"></i><span data-en="New Registration" data-hi="नया पंजीकरण">New Registration</span>
@@ -190,47 +188,46 @@
       </button>
     </div>
 
-    <!-- REGISTER FORM -->
     <form id="registerForm" novalidate class="mt-8 bg-white/50 border-2 border-[#D8CBAE] rounded-2xl p-6 sm:p-8 space-y-5">
 
       <div>
-        <label class="block text-sm font-semibold mb-1.5">Poora Naam <span class="font-hi text-[#6B4226]">(Full Name)</span></label>
+        <label class="block text-sm font-semibold mb-1.5"><span data-en="Full Name" data-hi="पूरा नाम">Poora Naam</span> <span class="font-hi text-[#6B4226]" data-en="(Full Name)" data-hi="(पूरा नाम)">(Full Name)</span></label>
         <input id="fullName" oninput="syncCard()" type="text" placeholder="Jaise: Ramesh Kumar Yadav"
           class="field-input w-full rounded-lg px-4 py-3 text-base">
-        <p class="err-msg text-xs mt-1 hidden" id="err-fullName">Kripya poora naam darj karein.</p>
+        <p class="err-msg text-xs mt-1 hidden" id="err-fullName" data-en="Please enter your full name." data-hi="कृपया पूरा नाम दर्ज करें।">Kripya poora naam darj karein.</p>
       </div>
 
       <div class="grid sm:grid-cols-2 gap-5">
         <div>
-          <label class="block text-sm font-semibold mb-1.5">Mobile Number</label>
+          <label class="block text-sm font-semibold mb-1.5" data-en="Mobile Number" data-hi="मोबाइल नंबर">Mobile Number</label>
           <div class="relative">
             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B4226] font-mono text-sm">+91</span>
             <input id="mobile" oninput="syncCard()" maxlength="10" inputmode="numeric" type="tel" placeholder="98XXXXXXXX"
               class="field-input w-full rounded-lg pl-14 pr-4 py-3 text-base font-mono">
           </div>
-          <p class="err-msg text-xs mt-1 hidden" id="err-mobile">Mobile number 10 digit ka hona chahiye.</p>
+          <p class="err-msg text-xs mt-1 hidden" id="err-mobile" data-en="Mobile number must be 10 digits." data-hi="मोबाइल नंबर 10 अंकों का होना चाहिए।">Mobile number 10 digit ka hona chahiye.</p>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1.5">Aadhaar / ID Number</label>
+          <label class="block text-sm font-semibold mb-1.5" data-en="ID Number" data-hi="आईडी नंबर">Aadhaar / ID Number</label>
           <input id="aadhaar" oninput="syncCard()" maxlength="12" inputmode="numeric" type="text" placeholder="XXXX XXXX XXXX"
             class="field-input w-full rounded-lg px-4 py-3 text-base font-mono">
-          <p class="err-msg text-xs mt-1 hidden" id="err-aadhaar">Aadhaar number 12 digit ka hona chahiye.</p>
+          <p class="err-msg text-xs mt-1 hidden" id="err-aadhaar" data-en="ID number must be valid." data-hi="आईडी नंबर सही होना चाहिए।">ID number valid hona chahiye.</p>
         </div>
       </div>
 
       <div class="grid sm:grid-cols-2 gap-5">
         <div>
-          <label class="block text-sm font-semibold mb-1.5">Gaon / Village</label>
+          <label class="block text-sm font-semibold mb-1.5" data-en="Village" data-hi="गाँव">Gaon / Village</label>
           <input id="village" oninput="syncCard()" type="text" placeholder="Gaon ka naam"
             class="field-input w-full rounded-lg px-4 py-3 text-base">
-          <p class="err-msg text-xs mt-1 hidden" id="err-village">Gaon ka naam zaroori hai.</p>
+          <p class="err-msg text-xs mt-1 hidden" id="err-village" data-en="Village name is required." data-hi="गाँव का नाम आवश्यक है।">Gaon ka naam zaroori hai.</p>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1.5">Fasal ka Prakar <span class="font-hi text-[#6B4226]">(Crop Type)</span></label>
+          <label class="block text-sm font-semibold mb-1.5"><span data-en="Crop Type" data-hi="फसल का प्रकार">Fasal ka Prakar</span> <span class="font-hi text-[#6B4226]" data-en="(Crop Type)" data-hi="(फसल प्रकार)">(Crop Type)</span></label>
           <select id="cropType" onchange="syncCard()" class="field-input w-full rounded-lg px-4 py-3 text-base">
-            <option value="">-- Chunein --</option>
+            <option value="" data-en="-- Select --" data-hi="-- चुनें --">-- Chunein --</option>
             <option value="Gehun (Wheat)">🌾 Gehun (Wheat)</option>
             <option value="Dhaan (Paddy)">🌾 Dhaan (Paddy)</option>
             <option value="Makka (Maize)">🌽 Makka (Maize)</option>
@@ -238,39 +235,38 @@
             <option value="Ganna (Sugarcane)">🎋 Ganna (Sugarcane)</option>
             <option value="Chana (Gram)">🫘 Chana (Gram)</option>
           </select>
-          <p class="err-msg text-xs mt-1 hidden" id="err-cropType">Fasal chunna zaroori hai.</p>
+          <p class="err-msg text-xs mt-1 hidden" id="err-cropType" data-en="Crop selection is required." data-hi="फसल चुनना आवश्यक है।">Fasal chunna zaroori hai.</p>
         </div>
       </div>
 
       <label class="flex items-start gap-3 text-sm text-[#5b5147] pt-1">
         <input type="checkbox" id="consent" class="mt-1 w-4 h-4 accent-[#2D5F3E]">
-        <span>Main pushti karta/karti hoon ki upar di gayi jaankari sahi hai.</span>
+        <span data-en="I confirm that the above information is correct." data-hi="मैं पुष्टि करता/करती हूँ कि ऊपर दी गई जानकारी सही है।">Main pushti karta/karti hoon ki upar di gayi jaankari sahi hai.</span>
       </label>
-      <p class="err-msg text-xs mt-1 hidden" id="err-consent">Aage badhne ke liye sahmati dein.</p>
+      <p class="err-msg text-xs mt-1 hidden" id="err-consent" data-en="Please give consent to proceed." data-hi="आगे बढ़ने के लिए सहमति दें।">Aage badhne ke liye sahmati dein.</p>
 
       <button type="submit" class="btn-primary w-full rounded-lg py-3.5 font-semibold text-base shadow-sm">
         <i class="fa-solid fa-file-signature mr-2"></i><span data-en="Complete Registration" data-hi="पंजीकरण पूरा करें">Complete Registration</span>
       </button>
     </form>
 
-    <!-- LOGIN FORM -->
     <form id="loginForm" novalidate class="hidden mt-8 bg-white/50 border-2 border-[#D8CBAE] rounded-2xl p-6 sm:p-8 space-y-5">
       <div>
-        <label class="block text-sm font-semibold mb-1.5">Mobile Number</label>
+        <label class="block text-sm font-semibold mb-1.5" data-en="Mobile Number" data-hi="मोबाइल नंबर">Mobile Number</label>
         <div class="relative">
           <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B4226] font-mono text-sm">+91</span>
           <input id="loginMobile" maxlength="10" inputmode="numeric" type="tel" placeholder="98XXXXXXXX"
             class="field-input w-full rounded-lg pl-14 pr-4 py-3 text-base font-mono">
         </div>
-        <p class="err-msg text-xs mt-1 hidden" id="err-loginMobile">Mobile number 10 digit ka hona chahiye.</p>
+        <p class="err-msg text-xs mt-1 hidden" id="err-loginMobile" data-en="Mobile number must be 10 digits." data-hi="मोबाइल नंबर 10 अंकों का होना चाहिए।">Mobile number 10 digit ka hona chahiye.</p>
       </div>
       <div>
-        <label class="block text-sm font-semibold mb-1.5">OTP</label>
+        <label class="block text-sm font-semibold mb-1.5" data-en="OTP" data-hi="ओटीपी">OTP</label>
         <input id="loginOtp" maxlength="6" inputmode="numeric" type="text" placeholder="6 digit OTP darj karein"
           class="field-input w-full rounded-lg px-4 py-3 text-base font-mono tracking-widest">
-        <p class="err-msg text-xs mt-1 hidden" id="err-loginOtp">6 digit ka sahi OTP darj karein.</p>
+        <p class="err-msg text-xs mt-1 hidden" id="err-loginOtp" data-en="Enter valid 6 digit OTP." data-hi="सही 6 अंकों का ओटीपी दर्ज करें।">6 digit ka sahi OTP darj karein.</p>
         <button type="button" onclick="sendOtp()" class="text-sm mt-2 font-semibold" style="color:var(--leaf)">
-          <i class="fa-solid fa-paper-plane mr-1"></i>OTP bhejein
+          <i class="fa-solid fa-paper-plane mr-1"></i><span data-en="Send OTP" data-hi="ओटीपी भेजें">OTP bhejein</span>
         </button>
       </div>
       <button type="submit" class="btn-primary w-full rounded-lg py-3.5 font-semibold text-base shadow-sm">
@@ -279,7 +275,6 @@
     </form>
   </section>
 
-  <!-- Right: live ID card -->
   <aside class="lg:col-span-2 lg:sticky lg:top-8">
     <p class="text-xs uppercase tracking-widest font-semibold text-center mb-3" style="color:var(--soil)" data-en="Your Farmer ID Card" data-hi="आपका किसान परिचय पत्र">Your Farmer ID Card</p>
     <div class="card-id rounded-2xl shadow-lg w-full max-w-sm mx-auto">
@@ -305,19 +300,19 @@
 
         <div class="mt-5 grid grid-cols-2 gap-x-3 gap-y-3 text-xs">
           <div>
-            <p class="text-[#8a7a5f]">Mobile</p>
+            <p class="text-[#8a7a5f]" data-en="Mobile" data-hi="मोबाइल">Mobile</p>
             <p class="font-mono font-semibold" id="cardMobile">—</p>
           </div>
           <div>
-            <p class="text-[#8a7a5f]">Aadhaar</p>
+            <p class="text-[#8a7a5f]" data-en="ID Number" data-hi="आईडी नंबर">ID</p>
             <p class="font-mono font-semibold" id="cardAadhaar">—</p>
           </div>
           <div>
-            <p class="text-[#8a7a5f]">Fasal</p>
+            <p class="text-[#8a7a5f]" data-en="Crop" data-hi="फसल">Fasal</p>
             <p class="font-semibold" id="cardCrop">—</p>
           </div>
           <div>
-            <p class="text-[#8a7a5f]">Panjikaran ID</p>
+            <p class="text-[#8a7a5f]" data-en="Reg ID" data-hi="पंजीकरण आईडी">Panjikaran ID</p>
             <p class="font-mono font-semibold" id="cardId">KP-—</p>
           </div>
         </div>
@@ -327,23 +322,62 @@
         </div>
       </div>
     </div>
-    <p class="text-center text-xs text-[#8a7a5f] mt-3"><i class="fa-solid fa-circle-info mr-1"></i>Form bharte hi card apne aap update hoga</p>
+    <p class="text-center text-xs text-[#8a7a5f] mt-3" data-en="Card updates automatically as you fill the form" data-hi="फ़ॉर्म भरते ही कार्ड अपने आप अपडेट हो जाएगा"><i class="fa-solid fa-circle-info mr-1"></i>Form bharte hi card apne aap update hoga</p>
   </aside>
 
 </main>
 
-<!-- SMS toast -->
 <div id="smsToast" class="sms-toast fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-white border-2 rounded-2xl shadow-2xl p-4 flex gap-3 z-50" style="border-color:var(--leaf)">
   <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:var(--leaf)">
     <i class="fa-solid fa-comment-sms text-white"></i>
   </div>
   <div>
-    <p class="text-xs font-semibold" style="color:var(--leaf)">Kisan Kendra <span class="text-[#8a7a5f] font-normal">· abhi</span></p>
-    <p class="text-sm mt-0.5" id="smsBody">Aapka panjikaran safaltapoorvak ho gaya hai! Panjikaran ID: KP-000000</p>
+    <p class="text-xs font-semibold" style="color:var(--leaf)">Kisan Kendra <span class="text-[#8a7a5f] font-normal" data-en="· just now" data-hi="· अभी">· abhi</span></p>
+    <p class="text-sm mt-0.5" id="smsBody" data-en="Your registration is successful!" data-hi="आपका पंजीकरण सफलतापूर्वक हो गया है!">Aapka panjikaran safaltapoorvak ho gaya hai!</p>
   </div>
 </div>
 
 <script>
+  // ---------- Inherit or Load Last Page Language Preference ----------
+  function getStoredLanguage() {
+    try {
+      return localStorage.getItem('kisan_lang') || 'hi';
+    } catch(e) {
+      return 'hi';
+    }
+  }
+
+  function setStoredLanguage(lang) {
+    try {
+      localStorage.setItem('kisan_lang', lang);
+    } catch(e) {}
+  }
+
+  function applyGlobalLanguage(lang) {
+    document.querySelectorAll('[data-en][data-hi]').forEach(el => {
+      el.innerHTML = lang === 'hi' ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+    });
+    document.documentElement.lang = lang;
+    const label = document.getElementById('langToggleLabel');
+    if(label) {
+      label.textContent = lang === 'hi' ? 'हिं / EN' : 'EN / हिं';
+    }
+  }
+
+  let currentLang = getStoredLanguage();
+
+  const langToggleBtn = document.getElementById('langToggle');
+  langToggleBtn.addEventListener('click', () => {
+    currentLang = currentLang === 'en' ? 'hi' : 'en';
+    setStoredLanguage(currentLang);
+    applyGlobalLanguage(currentLang);
+  });
+
+  // Page load hote hi pichle page ya storage ke hisaab se language set hogi
+  (function(){
+    applyGlobalLanguage(currentLang);
+  })();
+
   // ---------- dummy "database" ----------
   const dummyFarmerDB = [
     { mobile:"9876543210", name:"Suresh Patel", village:"Rampur" },
@@ -356,24 +390,6 @@
   navToggle.addEventListener('click', () => {
     const isOpen = navLinks.classList.toggle('nav-open');
     navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  });
-
-  // ---------- Hindi / English toggle ----------
-  const langToggleBtn = document.getElementById('langToggle');
-  const langToggleLabel = document.getElementById('langToggleLabel');
-  let currentLang = 'en';
-
-  function applyLanguage(lang){
-    document.querySelectorAll('[data-en][data-hi]').forEach(el => {
-      el.innerHTML = lang === 'hi' ? el.getAttribute('data-hi') : el.getAttribute('data-en');
-    });
-    document.documentElement.lang = lang;
-    langToggleLabel.textContent = lang === 'hi' ? 'हिं / EN' : 'EN / हिं';
-  }
-
-  langToggleBtn.addEventListener('click', () => {
-    currentLang = currentLang === 'en' ? 'hi' : 'en';
-    applyLanguage(currentLang);
   });
 
   function switchTab(tab){
@@ -435,7 +451,7 @@
 
     if(fullName.length < 3){ setError('fullName', true); valid = false; } else setError('fullName', false);
     if(!/^\d{10}$/.test(mobile)){ setError('mobile', true); valid = false; } else setError('mobile', false);
-    if(!/^\d{12}$/.test(aadhaar)){ setError('aadhaar', true); valid = false; } else setError('aadhaar', false);
+    if(aadhaar.length < 4){ setError('aadhaar', true); valid = false; } else setError('aadhaar', false);
     if(village.length < 2){ setError('village', true); valid = false; } else setError('village', false);
     if(!cropType){ setError('cropType', true); valid = false; } else setError('cropType', false);
     if(!consent){ setError('consent', true); valid = false; } else setError('consent', false);
@@ -450,7 +466,7 @@
     // stamp animation
     const stamp = document.getElementById('stamp');
     stamp.classList.remove('show');
-    void stamp.offsetWidth; // reflow to restart animation
+    void stamp.offsetWidth;
     setTimeout(() => stamp.classList.add('show'), 150);
 
     // SMS toast
@@ -458,10 +474,9 @@
       `Namaste ${fullName.split(' ')[0]}, aapka panjikaran safaltapoorvak ho gaya hai! Panjikaran ID: ${regId}`;
     showToast();
 
-    // Save the farmer's name so booking.html (and other pages) can greet them
+    // Save the farmer's name so booking.html can greet them
     localStorage.setItem('farmerName', fullName);
 
-    // Let the stamp animation + SMS toast play, then move to slot booking
     setTimeout(() => {
       window.location.href = 'booking.html';
     }, 1600);
@@ -479,8 +494,6 @@
     if(!valid) return;
 
     const farmer = dummyFarmerDB.find(f => f.mobile === mobile);
-    // The login form only collects mobile + OTP (no name field), so we use the
-    // matched record's name; new/unrecognised numbers fall back to a generic label.
     const loginName = farmer ? farmer.name : 'Kisan Mitra';
 
     document.getElementById('smsBody').textContent = farmer
@@ -488,7 +501,6 @@
       : `Login safal. Naye upyogkarta ke roop mein swagat hai!`;
     showToast();
 
-    // Save the farmer's name so booking.html (and other pages) can greet them
     localStorage.setItem('farmerName', loginName);
 
     setTimeout(() => {
@@ -511,29 +523,18 @@
     window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 4200);
   }
 </script>
-<!-- ============================================================
-  GLOBAL FLOATING VOICE ASSISTANT SNIPPET
-  Paste this entire block just before </body> on any page.
-  100% isolated: scoped classes (gfva-*), no body resets,
-  no global CSS overrides, no dependency on Tailwind being present.
-============================================================= -->
 
 <style>
-  /* All rules are scoped to #gfva-root and its children only.
-     Nothing here touches body, html, *, or unprefixed tags/classes. */
-
   #gfva-root, #gfva-root * {
     box-sizing: border-box;
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
   }
-
   #gfva-root {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    z-index: 999999; /* stays above host page content */
+    z-index: 999999;
   }
-
   .gfva-mic-btn {
     width: 68px;
     height: 68px;
@@ -543,28 +544,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #16a34a 0%, #ea580c 100%); /* green -> orange, agri theme */
+    background: linear-gradient(135deg, #16a34a 0%, #ea580c 100%);
     box-shadow: 0 6px 18px rgba(0,0,0,0.25);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
   }
-
   .gfva-mic-btn:hover {
     transform: scale(1.06);
     box-shadow: 0 8px 22px rgba(0,0,0,0.3);
   }
-
   .gfva-mic-btn:active {
     transform: scale(0.96);
   }
-
   .gfva-mic-icon {
     width: 28px;
     height: 28px;
     fill: #ffffff;
   }
-
-  /* Pulsing rings shown only while actively listening */
   .gfva-pulse-ring {
     position: absolute;
     inset: 0;
@@ -573,25 +569,20 @@
     opacity: 0;
     pointer-events: none;
   }
-
   #gfva-root.gfva-listening .gfva-pulse-ring {
     animation: gfva-pulse-anim 1.4s ease-out infinite;
   }
-
   #gfva-root.gfva-listening .gfva-pulse-ring.gfva-ring-delay {
     animation-delay: 0.5s;
   }
-
   @keyframes gfva-pulse-anim {
     0%   { transform: scale(1);   opacity: 0.6; }
     100% { transform: scale(1.8); opacity: 0; }
   }
-
   #gfva-root.gfva-listening .gfva-mic-btn {
     background: linear-gradient(135deg, #ea580c 0%, #16a34a 100%);
     box-shadow: 0 0 0 6px rgba(234, 88, 12, 0.25), 0 6px 18px rgba(0,0,0,0.3);
   }
-
   .gfva-status-bubble {
     position: absolute;
     bottom: 80px;
@@ -610,7 +601,6 @@
     transition: opacity 0.2s ease, transform 0.2s ease;
     pointer-events: none;
   }
-
   .gfva-status-bubble.gfva-visible {
     opacity: 1;
     transform: translateY(0);
@@ -651,7 +641,7 @@
 
   function speak(text, onEnd) {
     try {
-      window.speechSynthesis.cancel(); // stop any queued speech first
+      window.speechSynthesis.cancel();
       var utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'hi-IN';
       utter.rate = 1;
@@ -733,7 +723,6 @@
   }
 
   micBtn.addEventListener('click', function () {
-    // Greet, then begin listening once the greeting finishes speaking
     speak('हाँ, बताइये?', startListening);
   });
 })();
