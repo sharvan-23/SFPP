@@ -46,6 +46,22 @@
     box-shadow: 0 6px 16px -6px rgba(27,67,50,0.5);
   }
 
+  .lang-toggle{
+    border:2px solid var(--green-deep);
+    color: var(--green-deep);
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .lang-toggle:hover{
+    background: var(--green-deep);
+    color: var(--paper);
+  }
+
   /* ---------- voice instruction ---------- */
   .voice-ring{
     background: radial-gradient(circle, var(--ochre-tint) 0%, transparent 70%);
@@ -132,96 +148,137 @@
 <body class="min-h-screen flex flex-col">
 <div class="grain"></div>
 
-<!-- Header -->
-<header class="relative z-10 px-5 sm:px-8 py-5 flex items-center">
+<header class="relative z-10 px-5 sm:px-8 py-5 flex items-center justify-between">
   <div class="flex items-center gap-3">
     <div class="brand-icon w-12 h-12 rounded-full flex items-center justify-center shrink-0">
       <i class="fa-solid fa-wheat-awn text-xl" style="color:var(--paper)"></i>
     </div>
     <div class="leading-tight">
       <p class="font-display font-bold text-2xl tracking-wide" style="color:var(--green-deep)">KISAN MANDI</p>
-      <p class="text-xs" style="color:var(--muted)">फार्मर प्रोक्योरमेंट प्लेटफॉर्म</p>
+      <p class="text-xs" style="color:var(--muted)" data-en="Farmer Procurement Platform" data-hi="फार्मर प्रोक्योरमेंट प्लेटफॉर्म">फार्मर प्रोक्योरमेंट प्लेटफॉर्म</p>
     </div>
+  </div>
+  <div>
+    <button onclick="toggleGlobalLanguage()" id="langSwitchBtn" class="lang-toggle">हिं / EN</button>
   </div>
 </header>
 
-<!-- Voice instruction area -->
 <section class="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-2 pb-6">
   <div class="voice-ring w-32 h-32 rounded-full flex items-center justify-center">
     <button id="voiceBtn" class="voice-btn w-20 h-20 rounded-full flex items-center justify-center shadow-lg" aria-label="सुनें">
       <i class="fa-solid fa-volume-high text-2xl"></i>
     </button>
   </div>
-  <p class="font-hi-lg font-semibold text-3xl sm:text-4xl mt-5 leading-tight" style="color:var(--green-deep)">
+  <p class="font-hi-lg font-semibold text-3xl sm:text-4xl mt-5 leading-tight" style="color:var(--green-deep)" data-en="Select login method" data-hi="लॉगिन करने का तरीका चुनें">
     लॉगिन करने का तरीका चुनें
   </p>
-  <p class="text-sm mt-1" style="color:var(--muted)">आवाज़ सुनने के लिए ऊपर बटन दबाएं</p>
+  <p class="text-sm mt-1" style="color:var(--muted)" data-en="Press button above to listen instructions" data-hi="आवाज़ सुनने के लिए ऊपर बटन दबाएं">आवाज़ सुनने के लिए ऊपर बटन दबाएं</p>
 </section>
 
-<!-- Giant cards -->
 <main class="relative z-10 flex-1 px-5 sm:px-8 pb-4">
   <div class="grid sm:grid-cols-2 gap-5 h-full max-w-3xl mx-auto">
 
-    <!-- Card 1: Fingerprint -->
     <div id="cardFinger" class="giant-card card-green rounded-3xl flex flex-col items-center justify-center text-center p-8 min-h-[38vh] sm:min-h-[48vh]">
       <div class="card-icon-wrap icon-breathe w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center mb-6">
         <i class="fa-solid fa-fingerprint text-6xl sm:text-7xl"></i>
       </div>
-      <p class="font-hi-lg font-bold text-3xl sm:text-4xl">अंगूठा लगाएं</p>
-      <p class="text-sm mt-2 opacity-80">बायोमेट्रिक से लॉगिन करें</p>
+      <p class="font-hi-lg font-bold text-3xl sm:text-4xl" data-en="Place Thumb" data-hi="अंगूठा लगाएं">अंगूठा लगाएं</p>
+      <p class="text-sm mt-2 opacity-80" data-en="Login using biometrics" data-hi="बायोमेट्रिक से लॉगिन करें">बायोमेट्रिक से लॉगिन करें</p>
     </div>
 
-    <!-- Card 2: QR / Scan -->
     <div id="cardScan" class="giant-card card-ochre rounded-3xl flex flex-col items-center justify-center text-center p-8 min-h-[38vh] sm:min-h-[48vh]">
       <div class="card-icon-wrap icon-breathe w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center mb-6">
         <i class="fa-solid fa-qrcode text-6xl sm:text-7xl"></i>
       </div>
-      <p class="font-hi-lg font-bold text-3xl sm:text-4xl">कार्ड स्कैन करें</p>
-      <p class="text-sm mt-2 opacity-80">किसान कार्ड को स्कैन करें</p>
+      <p class="font-hi-lg font-bold text-3xl sm:text-4xl" data-en="Scan Card" data-hi="कार्ड स्कैन करें">कार्ड स्कैन करें</p>
+      <p class="text-sm mt-2 opacity-80" data-en="Scan Kisan card barcode" data-hi="किसान कार्ड को स्कैन करें">किसान कार्ड को स्कैन करें</p>
     </div>
 
   </div>
 </main>
 
-<!-- Manual login option -->
 <footer class="relative z-10 flex justify-center pb-8 pt-2">
   <a href="manual-login.html" class="manual-link inline-flex items-center gap-2 rounded-full px-5 py-3 text-base font-semibold">
-    ✍️ लिखकर फॉर्म भरें
+    <span data-en="✍️ Fill form manually" data-hi="✍️ लिखकर फॉर्म भरें">✍️ लिखकर फॉर्म भरें</span>
   </a>
 </footer>
 
-<!-- Scanning overlay -->
 <div id="scanOverlay" class="scan-overlay flex-col items-center justify-center text-center px-6">
   <div id="scanFrame" class="scan-frame w-40 h-40 sm:w-48 sm:h-48 rounded-3xl flex items-center justify-center mb-8">
     <i id="scanIcon" class="fa-solid fa-fingerprint text-7xl" style="color:var(--ochre)"></i>
     <div class="scan-line"></div>
   </div>
-  <p class="scan-text font-hi-lg font-bold text-3xl sm:text-4xl" style="color:var(--paper)">स्कैन हो रहा है...</p>
-  <p class="text-sm mt-2" style="color:#C7D6CC">कृपया प्रतीक्षा करें</p>
+  <p class="scan-text font-hi-lg font-bold text-3xl sm:text-4xl" style="color:var(--paper)" data-en="Scanning..." data-hi="स्कैन हो रहा है...">स्कैन हो रहा है...</p>
+  <p class="text-sm mt-2" style="color:#C7D6CC" data-en="Please wait" data-hi="कृपया प्रतीक्षा करें">कृपया प्रतीक्षा करें</p>
 </div>
 
 <script>
+  // ---------- Global Language Persistence Script ----------
+  function getStoredLanguage() {
+    try {
+      return localStorage.getItem('kisan_lang') || 'hi';
+    } catch(e) {
+      return 'hi';
+    }
+  }
+
+  function setStoredLanguage(lang) {
+    try {
+      localStorage.setItem('kisan_lang', lang);
+    } catch(e) {}
+  }
+
+  function applyGlobalLanguage(lang) {
+    document.querySelectorAll('[data-en][data-hi]').forEach(el => {
+      el.innerHTML = lang === 'hi' ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+    });
+    document.documentElement.lang = lang;
+    const btn = document.getElementById('langSwitchBtn');
+    if(btn) {
+      btn.textContent = lang === 'hi' ? 'EN' : 'हिं';
+    }
+  }
+
+  function toggleGlobalLanguage() {
+    const current = getStoredLanguage();
+    const next = current === 'hi' ? 'en' : 'hi';
+    setStoredLanguage(next);
+    applyGlobalLanguage(next);
+  }
+
+  // Load language preference from previous/stored state on startup
+  (function(){
+    const currentLang = getStoredLanguage();
+    applyGlobalLanguage(currentLang);
+  })();
+
   // ---------- speech helper (Hindi text-to-speech via Web Speech API) ----------
   function speakHindi(text){
     if(!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = 'hi-IN';
+    utter.lang = getStoredLanguage() === 'hi' ? 'hi-IN' : 'en-US';
     utter.rate = 0.95;
     const voices = window.speechSynthesis.getVoices();
-    const hiVoice = voices.find(v => v.lang === 'hi-IN') || voices.find(v => v.lang && v.lang.startsWith('hi'));
-    if(hiVoice) utter.voice = hiVoice;
+    const langCode = getStoredLanguage() === 'hi' ? 'hi' : 'en';
+    const targetVoice = voices.find(v => v.lang && v.lang.startsWith(langCode));
+    if(targetVoice) utter.voice = targetVoice;
     window.speechSynthesis.speak(utter);
   }
 
-  // warm up voices list (some browsers load it async)
+  // warm up voices list
   if('speechSynthesis' in window){
     window.speechSynthesis.getVoices();
     window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
   }
 
   document.getElementById('voiceBtn').addEventListener('click', () => {
-    speakHindi('लॉगिन करने का तरीका चुनें। अंगूठा लगाने के लिए हरा कार्ड दबाएं। कार्ड स्कैन करने के लिए पीला कार्ड दबाएं।');
+    const lang = getStoredLanguage();
+    if(lang === 'hi') {
+      speakHindi('लॉगिन करने का तरीका चुनें। अंगूठा लगाने के लिए हरा कार्ड दबाएं। कार्ड स्कैन करने के लिए पीला कार्ड दबाएं।');
+    } else {
+      speakHindi('Select login method. Press the green card to place thumb. Press the yellow card to scan code.');
+    }
   });
 
   // ---------- scanning overlay logic ----------
@@ -233,7 +290,13 @@
     scanIcon.className = `fa-solid ${iconClass} text-7xl`;
     scanIcon.style.color = accentColor;
     scanOverlay.classList.add('show');
-    speakHindi('स्कैन हो रहा है, कृपया प्रतीक्षा करें।');
+    
+    const lang = getStoredLanguage();
+    if(lang === 'hi') {
+      speakHindi('स्कैन हो रहा है, कृपया प्रतीक्षा करें।');
+    } else {
+      speakHindi('Scanning, please wait.');
+    }
 
     setTimeout(() => {
       window.location.href = 'booking.html';
