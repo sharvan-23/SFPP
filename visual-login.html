@@ -247,26 +247,26 @@
   }
 
   // Load language preference from previous/stored state on startup
-  (function(){
+  document.addEventListener("DOMContentLoaded", function() {
     const currentLang = getStoredLanguage();
     applyGlobalLanguage(currentLang);
-  })();
+  });
 
-  // ---------- speech helper (Hindi text-to-speech via Web Speech API) ----------
-  function speakHindi(text){
+  // ---------- speech helper (Hindi/English text-to-speech via Web Speech API) ----------
+  function speakText(text){
     if(!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = getStoredLanguage() === 'hi' ? 'hi-IN' : 'en-US';
+    const lang = getStoredLanguage();
+    utter.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
     utter.rate = 0.95;
     const voices = window.speechSynthesis.getVoices();
-    const langCode = getStoredLanguage() === 'hi' ? 'hi' : 'en';
+    const langCode = lang === 'hi' ? 'hi' : 'en';
     const targetVoice = voices.find(v => v.lang && v.lang.startsWith(langCode));
     if(targetVoice) utter.voice = targetVoice;
     window.speechSynthesis.speak(utter);
   }
 
-  // warm up voices list
   if('speechSynthesis' in window){
     window.speechSynthesis.getVoices();
     window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
@@ -275,9 +275,9 @@
   document.getElementById('voiceBtn').addEventListener('click', () => {
     const lang = getStoredLanguage();
     if(lang === 'hi') {
-      speakHindi('लॉगिन करने का तरीका चुनें। अंगूठा लगाने के लिए हरा कार्ड दबाएं। कार्ड स्कैन करने के लिए पीला कार्ड दबाएं।');
+      speakText('लॉगिन करने का तरीका चुनें। अंगूठा लगाने के लिए हरा कार्ड दबाएं। कार्ड स्कैन करने के लिए पीला कार्ड दबाएं।');
     } else {
-      speakHindi('Select login method. Press the green card to place thumb. Press the yellow card to scan code.');
+      speakText('Select login method. Press the green card to place thumb. Press the yellow card to scan code.');
     }
   });
 
@@ -293,9 +293,9 @@
     
     const lang = getStoredLanguage();
     if(lang === 'hi') {
-      speakHindi('स्कैन हो रहा है, कृपया प्रतीक्षा करें।');
+      speakText('स्कैन हो रहा है, कृपया प्रतीक्षा करें।');
     } else {
-      speakHindi('Scanning, please wait.');
+      speakText('Scanning, please wait.');
     }
 
     setTimeout(() => {
