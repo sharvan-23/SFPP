@@ -2,343 +2,267 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kisan Panjikaran | Farmer Registration</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>किसान सेवा — कतार और टोकन</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
   :root{
-    --wheat:#D9A441;
-    --wheat-dark:#B9832A;
-    --leaf:#2D5F3E;
-    --leaf-dark:#1F4530;
-    --soil:#6B4226;
-    --paper:#FBF7EE;
-    --paper-dim:#F1E9D8;
-    --ink:#2B2420;
+    --sky-top:#274B63;
+    --sky-mid:#3C7A6B;
+    --field:#1F3D2C;
+    --field-dark:#152A1E;
+    --sun:#F2B441;
+    --sun-soft:#F7CE7A;
+    --cream:#FBF4E4;
+    --cream-dim:#D9CDAE;
+    --leaf:#5C9A63;
     --alert:#C1440E;
+    --ink:#122016;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    height:100%;
+    font-family:'Hind',sans-serif;
+    color:var(--cream);
   }
   body{
-    background-color: var(--paper);
-    color: var(--ink);
-    font-family:'Inter',sans-serif;
-    background-image:
-      radial-gradient(circle at 1px 1px, rgba(107,66,38,0.08) 1px, transparent 0);
-    background-size: 22px 22px;
-  }
-  .font-display{ font-family:'Fraunces', serif; }
-  .font-mono{ font-family:'JetBrains Mono', monospace; }
-  .font-hi{ font-family:'Noto Sans Devanagari', sans-serif; }
-
-  .field-input{
-    background: var(--paper);
-    border: 2px solid #D8CBAE;
-    transition: border-color .15s ease, box-shadow .15s ease;
-  }
-  .field-input:focus{
-    outline:none;
-    border-color: var(--leaf);
-    box-shadow: 0 0 0 3px rgba(45,95,62,0.15);
-  }
-  .field-input.error{
-    border-color: var(--alert);
-    box-shadow: 0 0 0 3px rgba(193,68,14,0.12);
-  }
-  .err-msg{ color: var(--alert); }
-
-  .btn-primary{
-    background: var(--leaf);
-    color: var(--paper);
-    transition: transform .12s ease, background .15s ease;
-  }
-  .btn-primary:hover{ background: var(--leaf-dark); transform: translateY(-1px); }
-  .btn-primary:active{ transform: translateY(0); }
-
-  .card-id{
-    background: linear-gradient(155deg, #FDF9EF 0%, #F4E9CE 100%);
-    border: 1.5px solid #D8CBAE;
-    position: relative;
-    overflow: hidden;
-  }
-  .card-id::before{
-    content:"";
-    position:absolute; inset:0;
-    background-image: repeating-linear-gradient(115deg, rgba(107,66,38,0.035) 0px, rgba(107,66,38,0.035) 2px, transparent 2px, transparent 14px);
-    pointer-events:none;
-  }
-  .card-strip{
-    background: repeating-linear-gradient(135deg, var(--leaf), var(--leaf) 10px, var(--wheat) 10px, var(--wheat) 20px);
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    background:linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 46%, var(--field) 47%, var(--field-dark) 100%);
+    padding: 20px 24px calc(20px + env(safe-area-inset-bottom));
   }
 
-  .stamp{
-    border: 3px solid var(--leaf);
-    color: var(--leaf);
-    transform: rotate(-9deg) scale(0.6);
-    opacity: 0;
-    transition: transform .5s cubic-bezier(.34,1.56,.64,1), opacity .4s ease;
+  header{
+    width:100%;
+    max-width:420px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
   }
-  .stamp.show{
-    transform: rotate(-9deg) scale(1);
-    opacity: 1;
-  }
-
-  .toggle-tab.active{
-    background: var(--leaf);
-    color: var(--paper);
-  }
-
-  .nav-link{
-    color:#5b5147;
-    transition: color .15s ease, background .15s ease;
-  }
-  .nav-link:hover, .nav-link:focus-visible{
-    color: var(--leaf);
-    background: rgba(45,95,62,0.08);
-  }
-  .nav-link.active{
-    color: var(--leaf);
+  .brand{
+    font-family:'Baloo 2',sans-serif;
     font-weight:700;
-    background: rgba(45,95,62,0.1);
+    font-size:20px;
+    color:var(--sun-soft);
+    margin:0;
   }
+  .brand span{color:var(--cream);}
 
   .lang-toggle{
-    border:2px solid var(--leaf);
-    color: var(--leaf);
-    background: transparent;
-    transition: background .15s ease, color .15s ease;
-    cursor: pointer;
+    border:1px solid rgba(242,180,65,0.4);
+    background:rgba(18,32,22,0.6);
+    color:var(--sun);
+    padding:5px 12px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
   }
-  .lang-toggle:hover, .lang-toggle:focus-visible{
-    background: var(--leaf);
-    color: var(--paper);
-    outline:none;
+  .lang-toggle:hover{
+    background:var(--sun);
+    color:var(--ink);
   }
 
-  #navLinks.nav-open{ display:flex !important; }
-
-  .sms-toast{
-    transform: translateY(140%);
-    transition: transform .45s cubic-bezier(.22,1,.36,1);
+  /* --- Token Card Box --- */
+  main{
+    width:100%;
+    max-width:420px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    margin:auto 0;
   }
-  .sms-toast.show{ transform: translateY(0); }
 
-  @keyframes blink-dot{
-    0%,100%{ opacity:1; } 50%{ opacity:.25; }
+  .token-card{
+    width:100%;
+    background:rgba(18,32,22,0.75);
+    border:2px solid rgba(242,180,65,0.3);
+    backdrop-filter:blur(8px);
+    border-radius:24px;
+    padding:22px 20px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(0,0,0,0.4);
   }
-  .dot-live{ animation: blink-dot 1.4s ease-in-out infinite; }
 
-  ::selection{ background: var(--wheat); color: var(--ink); }
+  .token-title{
+    font-size:15px;
+    color:var(--cream-dim);
+    margin:0 0 6px;
+    font-weight:500;
+  }
+
+  .token-number{
+    font-family:'Baloo 2',sans-serif;
+    font-size:48px;
+    font-weight:700;
+    color:var(--sun);
+    line-height:1;
+    margin:0 0 10px;
+  }
+
+  .badge-status{
+    display:inline-block;
+    background:rgba(92,154,99,0.25);
+    border:1px solid var(--leaf);
+    color:#94e29d;
+    padding:4px 12px;
+    border-radius:99px;
+    font-size:13px;
+    font-weight:600;
+  }
+
+  .info-box{
+    width:100%;
+    background:rgba(255,255,255,0.06);
+    border-radius:16px;
+    padding:12px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    font-size:14px;
+  }
+  .info-row{
+    display:flex;
+    justify-content:space-between;
+  }
+  .info-label{color:var(--cream-dim);}
+  .info-val{font-weight:600;color:var(--cream);}
+
+  /* --- Action Buttons Container --- */
+  .actions-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    transition: transform 0.15s ease;
+  }
+  .action-btn:active { transform: scale(0.97); }
+
+  .btn-tracking {
+    background: var(--sun);
+    color: var(--ink);
+  }
+
+  .btn-home {
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  /* --- Floating Voice Assistant UI --- */
+  #gfva-root{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:99999;
+  }
+  .gfva-mic-btn{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:radial-gradient(circle at 32% 28%, var(--sun-soft), var(--sun) 65%);
+    box-shadow:0 6px 20px rgba(0,0,0,0.4);
+    transition:transform 0.2s ease;
+  }
+  .gfva-mic-btn:active{transform:scale(0.92);}
+  .gfva-mic-btn svg{width:24px;height:24px;}
+  
+  .gfva-status{
+    position:absolute;
+    right:70px;
+    bottom:8px;
+    background:#122016;
+    color:var(--cream);
+    padding:8px 14px;
+    border-radius:10px;
+    font-size:13px;
+    border:1px solid rgba(255,255,255,0.2);
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .gfva-status.show{opacity:1;}
 </style>
 </head>
-<body class="min-h-screen">
+<body>
 
-<header class="border-b-2 border-[#D8CBAE] bg-[--paper] sticky top-0 z-50" style="background:var(--paper)">
-  <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:var(--leaf)">
-        <i class="fa-solid fa-wheat-awn text-[--paper]" style="color:#FBF7EE"></i>
-      </div>
-      <div class="leading-tight">
-        <p class="font-display font-semibold text-lg" data-en="Kisan Kendra" data-hi="किसान केंद्र">Kisan Kendra</p>
-        <p class="text-xs text-[#6B4226] font-hi" data-en="Procurement Platform" data-hi="किसान उपार्जन मंच">किसान उपार्जन मंच</p>
-      </div>
-    </a>
+  <header>
+    <p class="brand"><span data-en="Kisan" data-hi="किसान">किसान</span> <span data-en="Procurement" data-hi="प्रोक्योरमेंट">प्रोक्योरमेंट</span></p>
+    <button onclick="toggleGlobalLanguage()" id="langSwitchBtn" class="lang-toggle">हिं / EN</button>
+  </header>
 
-    <div class="flex items-center gap-3">
-      <div class="hidden sm:flex items-center gap-2 text-sm text-[#6B4226]">
-        <i class="fa-solid fa-phone-volume"></i>
-        <span><span data-en="Helpline" data-hi="हेल्पलाइन">Helpline</span> · 1800-XXX-XXX</span>
-      </div>
-      <button id="langToggle" class="lang-toggle rounded-full px-3 py-1.5 text-xs font-bold">
-        <span id="langToggleLabel">हिं / EN</span>
-      </button>
-      <button id="navToggle" class="sm:hidden w-9 h-9 flex items-center justify-center rounded-lg border-2 border-[#D8CBAE]" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation menu">
-        <i class="fa-solid fa-bars" style="color:var(--soil)"></i>
-      </button>
-    </div>
-  </div>
-
-  <nav class="border-t border-[#D8CBAE]">
-    <ul id="navLinks" class="hidden sm:flex max-w-6xl mx-auto px-5 py-2 gap-1 text-sm font-semibold flex-col sm:flex-row">
-      <li><a href="index.html" class="nav-link block px-3 py-2 rounded-lg" data-en="Home" data-hi="होम">Home</a></li>
-      <li><a href="booking.html" class="nav-link block px-3 py-2 rounded-lg" data-en="Book Slot" data-hi="स्लॉट बुक करें">Book Slot</a></li>
-      <li><a href="queue.html" class="nav-link block px-3 py-2 rounded-lg" data-en="Live Queue" data-hi="लाइव कतार">Live Queue</a></li>
-      <li><a href="tracking.html" class="nav-link block px-3 py-2 rounded-lg" data-en="Track" data-hi="ट्रैक करें">Track</a></li>
-    </ul>
-  </nav>
-</header>
-
-<main class="max-w-6xl mx-auto px-5 py-10 grid lg:grid-cols-5 gap-10 items-start">
-
-  <section class="lg:col-span-3">
-    <p class="uppercase tracking-widest text-xs font-semibold text-[--soil]" style="color:var(--soil)" data-en="Season 2026 · Registration Open" data-hi="सीज़न 2026 · पंजीकरण खुला है">Season 2026 · Registration Open</p>
-    <h1 class="font-display text-4xl sm:text-5xl font-semibold mt-2 leading-tight" data-en='Register to sell your <span style="color:var(--leaf)">harvest.</span>' data-hi='अपनी <span style="color:var(--leaf)">फसल</span> बेचने के लिए पंजीकरण करें।'>
-      Register to sell your <span style="color:var(--leaf)">harvest.</span>
-    </h1>
-    <p class="mt-3 text-[#5b5147] max-w-lg" data-en="Register once and book your slot directly at the procurement center — no need to stand in line." data-hi="एक बार पंजीकरण करके आप सीधे खरीद केंद्र पर स्लॉट बुक कर सकते हैं — बिना कतार में खड़े हुए।">Register once and book your slot directly at the procurement center — no need to stand in line.</p>
-
-    <div class="mt-8 inline-flex rounded-full border-2 border-[#D8CBAE] p-1 bg-white/60">
-      <button id="tabRegister" onclick="switchTab('register')" class="toggle-tab active px-6 py-2 rounded-full text-sm font-semibold transition">
-        <i class="fa-solid fa-user-plus mr-1.5"></i><span data-en="New Registration" data-hi="नया पंजीकरण">New Registration</span>
-      </button>
-      <button id="tabLogin" onclick="switchTab('login')" class="toggle-tab px-6 py-2 rounded-full text-sm font-semibold transition">
-        <i class="fa-solid fa-right-to-bracket mr-1.5"></i><span data-en="Login" data-hi="लॉगिन">Login</span>
-      </button>
+  <main>
+    <div class="token-card">
+      <p class="token-title" data-en="Your Current Token Number" data-hi="आपका वर्तमान टोकन नंबर">आपका वर्तमान टोकन नंबर</p>
+      <h1 class="token-number">#42</h1>
+      <span class="badge-status" data-en="Active in Queue" data-hi="कतार में सक्रिय">कतार में सक्रिय</span>
     </div>
 
-    <form id="registerForm" novalidate class="mt-8 bg-white/50 border-2 border-[#D8CBAE] rounded-2xl p-6 sm:p-8 space-y-5">
-
-      <div>
-        <label class="block text-sm font-semibold mb-1.5"><span data-en="Full Name" data-hi="पूरा नाम">Poora Naam</span> <span class="font-hi text-[#6B4226]" data-en="(Full Name)" data-hi="(पूरा नाम)">(Full Name)</span></label>
-        <input id="fullName" oninput="syncCard()" type="text" placeholder="Jaise: Ramesh Kumar Yadav"
-          class="field-input w-full rounded-lg px-4 py-3 text-base">
-        <p class="err-msg text-xs mt-1 hidden" id="err-fullName" data-en="Please enter your full name." data-hi="कृपया पूरा नाम दर्ज करें।">Kripya poora naam darj karein.</p>
+    <div class="info-box">
+      <div class="info-row">
+        <span class="info-label" data-en="Estimated Wait Time:" data-hi="अनुमानित प्रतीक्षा समय:">अनुमानित प्रतीक्षा समय:</span>
+        <span class="info-val" data-en="Approx 15 mins" data-hi="लगभग 15 मिनट">लगभग 15 मिनट</span>
       </div>
-
-      <div class="grid sm:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-semibold mb-1.5" data-en="Mobile Number" data-hi="मोबाइल नंबर">Mobile Number</label>
-          <div class="relative">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B4226] font-mono text-sm">+91</span>
-            <input id="mobile" oninput="syncCard()" maxlength="10" inputmode="numeric" type="tel" placeholder="98XXXXXXXX"
-              class="field-input w-full rounded-lg pl-14 pr-4 py-3 text-base font-mono">
-          </div>
-          <p class="err-msg text-xs mt-1 hidden" id="err-mobile" data-en="Mobile number must be 10 digits." data-hi="मोबाइल नंबर 10 अंकों का होना चाहिए।">Mobile number 10 digit ka hona chahiye.</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold mb-1.5" data-en="ID Number" data-hi="आईडी नंबर">Aadhaar / ID Number</label>
-          <input id="aadhaar" oninput="syncCard()" maxlength="12" inputmode="numeric" type="text" placeholder="XXXX XXXX XXXX"
-            class="field-input w-full rounded-lg px-4 py-3 text-base font-mono">
-          <p class="err-msg text-xs mt-1 hidden" id="err-aadhaar" data-en="ID number must be valid." data-hi="आईडी नंबर सही होना चाहिए।">ID number valid hona chahiye.</p>
-        </div>
-      </div>
-
-      <div class="grid sm:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-semibold mb-1.5" data-en="Village" data-hi="गाँव">Gaon / Village</label>
-          <input id="village" oninput="syncCard()" type="text" placeholder="Gaon ka naam"
-            class="field-input w-full rounded-lg px-4 py-3 text-base">
-          <p class="err-msg text-xs mt-1 hidden" id="err-village" data-en="Village name is required." data-hi="गाँव का नाम आवश्यक है।">Gaon ka naam zaroori hai.</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold mb-1.5"><span data-en="Crop Type" data-hi="फसल का प्रकार">Fasal ka Prakar</span> <span class="font-hi text-[#6B4226]" data-en="(Crop Type)" data-hi="(फसल प्रकार)">(Crop Type)</span></label>
-          <select id="cropType" onchange="syncCard()" class="field-input w-full rounded-lg px-4 py-3 text-base">
-            <option value="" data-en="-- Select --" data-hi="-- चुनें --">-- Chunein --</option>
-            <option value="Gehun (Wheat)">🌾 Gehun (Wheat)</option>
-            <option value="Dhaan (Paddy)">🌾 Dhaan (Paddy)</option>
-            <option value="Makka (Maize)">🌽 Makka (Maize)</option>
-            <option value="Sarson (Mustard)">🌻 Sarson (Mustard)</option>
-            <option value="Ganna (Sugarcane)">🎋 Ganna (Sugarcane)</option>
-            <option value="Chana (Gram)">🫘 Chana (Gram)</option>
-          </select>
-          <p class="err-msg text-xs mt-1 hidden" id="err-cropType" data-en="Crop selection is required." data-hi="फसल चुनना आवश्यक है।">Fasal chunna zaroori hai.</p>
-        </div>
-      </div>
-
-      <label class="flex items-start gap-3 text-sm text-[#5b5147] pt-1">
-        <input type="checkbox" id="consent" class="mt-1 w-4 h-4 accent-[#2D5F3E]">
-        <span data-en="I confirm that the above information is correct." data-hi="मैं पुष्टि करता/करती हूँ कि ऊपर दी गई जानकारी सही है।">Main pushti karta/karti hoon ki upar di gayi jaankari sahi hai.</span>
-      </label>
-      <p class="err-msg text-xs mt-1 hidden" id="err-consent" data-en="Please give consent to proceed." data-hi="आगे बढ़ने के लिए सहमति दें।">Aage badhne ke liye sahmati dein.</p>
-
-      <button type="submit" class="btn-primary w-full rounded-lg py-3.5 font-semibold text-base shadow-sm">
-        <i class="fa-solid fa-file-signature mr-2"></i><span data-en="Complete Registration" data-hi="पंजीकरण पूरा करें">Complete Registration</span>
-      </button>
-    </form>
-
-    <form id="loginForm" novalidate class="hidden mt-8 bg-white/50 border-2 border-[#D8CBAE] rounded-2xl p-6 sm:p-8 space-y-5">
-      <div>
-        <label class="block text-sm font-semibold mb-1.5" data-en="Mobile Number" data-hi="मोबाइल नंबर">Mobile Number</label>
-        <div class="relative">
-          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B4226] font-mono text-sm">+91</span>
-          <input id="loginMobile" maxlength="10" inputmode="numeric" type="tel" placeholder="98XXXXXXXX"
-            class="field-input w-full rounded-lg pl-14 pr-4 py-3 text-base font-mono">
-        </div>
-        <p class="err-msg text-xs mt-1 hidden" id="err-loginMobile" data-en="Mobile number must be 10 digits." data-hi="मोबाइल नंबर 10 अंकों का होना चाहिए।">Mobile number 10 digit ka hona chahiye.</p>
-      </div>
-      <div>
-        <label class="block text-sm font-semibold mb-1.5" data-en="OTP" data-hi="ओटीपी">OTP</label>
-        <input id="loginOtp" maxlength="6" inputmode="numeric" type="text" placeholder="6 digit OTP darj karein"
-          class="field-input w-full rounded-lg px-4 py-3 text-base font-mono tracking-widest">
-        <p class="err-msg text-xs mt-1 hidden" id="err-loginOtp" data-en="Enter valid 6 digit OTP." data-hi="सही 6 अंकों का ओटीपी दर्ज करें।">6 digit ka sahi OTP darj karein.</p>
-        <button type="button" onclick="sendOtp()" class="text-sm mt-2 font-semibold" style="color:var(--leaf)">
-          <i class="fa-solid fa-paper-plane mr-1"></i><span data-en="Send OTP" data-hi="ओटीपी भेजें">OTP bhejein</span>
-        </button>
-      </div>
-      <button type="submit" class="btn-primary w-full rounded-lg py-3.5 font-semibold text-base shadow-sm">
-        <i class="fa-solid fa-right-to-bracket mr-2"></i><span data-en="Login" data-hi="लॉगिन करें">Login</span>
-      </button>
-    </form>
-  </section>
-
-  <aside class="lg:col-span-2 lg:sticky lg:top-8">
-    <p class="text-xs uppercase tracking-widest font-semibold text-center mb-3" style="color:var(--soil)" data-en="Your Farmer ID Card" data-hi="आपका किसान परिचय पत्र">Your Farmer ID Card</p>
-    <div class="card-id rounded-2xl shadow-lg w-full max-w-sm mx-auto">
-      <div class="card-strip h-3 rounded-t-2xl"></div>
-      <div class="p-6 relative">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="font-display font-semibold text-sm" style="color:var(--leaf)">KISAN PARICHAY PATRA</p>
-            <p class="text-[10px] text-[#8a7a5f] font-hi">किसान पहचान पत्र</p>
-          </div>
-          <i class="fa-solid fa-tractor text-xl" style="color:var(--wheat-dark)"></i>
-        </div>
-
-        <div class="mt-5 flex gap-4 items-start">
-          <div class="w-16 h-16 rounded-lg flex items-center justify-center shrink-0" style="background:var(--paper-dim); border:1.5px dashed #C7B78E">
-            <i class="fa-solid fa-user text-2xl" style="color:#B9A87E"></i>
-          </div>
-          <div class="min-w-0">
-            <p class="font-display text-lg font-semibold truncate" id="cardName">— Naam —</p>
-            <p class="text-xs text-[#8a7a5f] mt-0.5" id="cardVillage">Gaon: —</p>
-          </div>
-        </div>
-
-        <div class="mt-5 grid grid-cols-2 gap-x-3 gap-y-3 text-xs">
-          <div>
-            <p class="text-[#8a7a5f]" data-en="Mobile" data-hi="मोबाइल">Mobile</p>
-            <p class="font-mono font-semibold" id="cardMobile">—</p>
-          </div>
-          <div>
-            <p class="text-[#8a7a5f]" data-en="ID Number" data-hi="आईडी नंबर">ID</p>
-            <p class="font-mono font-semibold" id="cardAadhaar">—</p>
-          </div>
-          <div>
-            <p class="text-[#8a7a5f]" data-en="Crop" data-hi="फसल">Fasal</p>
-            <p class="font-semibold" id="cardCrop">—</p>
-          </div>
-          <div>
-            <p class="text-[#8a7a5f]" data-en="Reg ID" data-hi="पंजीकरण आईडी">Panjikaran ID</p>
-            <p class="font-mono font-semibold" id="cardId">KP-—</p>
-          </div>
-        </div>
-
-        <div id="stamp" class="stamp absolute right-5 bottom-5 w-20 h-20 rounded-full flex items-center justify-center text-[9px] font-bold text-center leading-tight">
-          PANJIKRIT<br>✓ VERIFIED
-        </div>
+      <div class="info-row">
+        <span class="info-label" data-en="Center:" data-hi="केंद्र:">केंद्र:</span>
+        <span class="info-val" data-en="Rampur Mandi Center" data-hi="रामपुर मंडी केंद्र">रामपुर मंडी केंद्र</span>
       </div>
     </div>
-    <p class="text-center text-xs text-[#8a7a5f] mt-3" data-en="Card updates automatically as you fill the form" data-hi="फ़ॉर्म भरते ही कार्ड अपने आप अपडेट हो जाएगा"><i class="fa-solid fa-circle-info mr-1"></i>Form bharte hi card apne aap update hoga</p>
-  </aside>
 
-</main>
+    <div class="actions-container">
+      <a class="action-btn btn-tracking" href="tracking.html">
+        📊 <span data-en="Live Tracking & Payment Status" data-hi="लाइव ट्रैकिंग और भुगतान स्थिति">Live Tracking & Payment Status</span>
+      </a>
+      <a class="action-btn btn-home" href="index.html">
+        <span data-en="← Back to Home" data-hi="← मुख्य पृष्ठ पर जाएं">← मुख्य पृष्ठ पर जाएं</span>
+      </a>
+    </div>
+  </main>
 
-<div id="smsToast" class="sms-toast fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-white border-2 rounded-2xl shadow-2xl p-4 flex gap-3 z-50" style="border-color:var(--leaf)">
-  <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:var(--leaf)">
-    <i class="fa-solid fa-comment-sms text-white"></i>
+  <footer>
+    <p style="font-size:13px; color:var(--cream-dim); margin:0; text-align:center;" data-en="Press mic for voice assistance" data-hi="सहायता के लिए माइक दबाकर बोलें">सहायता के लिए माइक दबाकर बोलें</p>
+  </footer>
+
+  <!-- ADVANCED VOICE ASSISTANT -->
+  <div id="gfva-root">
+    <div class="gfva-status" id="gfva-status" data-en="Listening..." data-hi="सुन रहे हैं...">बोलकर मदद लें</div>
+    <button type="button" class="gfva-mic-btn" id="gfva-mic-btn" aria-label="Voice Assistant">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 15a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 0 0-7 0v5.5A3.5 3.5 0 0 0 12 15Z" fill="#122016"/>
+        <path d="M6.5 11.5a5.5 5.5 0 0 0 11 0" stroke="#122016" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M12 17v3.2M9.2 20.2h5.6" stroke="#122016" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
   </div>
-  <div>
-    <p class="text-xs font-semibold" style="color:var(--leaf)">Kisan Kendra <span class="text-[#8a7a5f] font-normal" data-en="· just now" data-hi="· अभी">· abhi</span></p>
-    <p class="text-sm mt-0.5" id="smsBody" data-en="Your registration is successful!" data-hi="आपका पंजीकरण सफलतापूर्वक हो गया है!">Aapka panjikaran safaltapoorvak ho gaya hai!</p>
-  </div>
-</div>
 
 <script>
-  // ---------- Inherit or Load Last Page Language Preference ----------
+  // ---------- Global Language Persistence Script ----------
   function getStoredLanguage() {
     try {
       return localStorage.getItem('kisan_lang') || 'hi';
@@ -358,374 +282,115 @@
       el.innerHTML = lang === 'hi' ? el.getAttribute('data-hi') : el.getAttribute('data-en');
     });
     document.documentElement.lang = lang;
-    const label = document.getElementById('langToggleLabel');
-    if(label) {
-      label.textContent = lang === 'hi' ? 'हिं / EN' : 'EN / हिं';
+    const btn = document.getElementById('langSwitchBtn');
+    if(btn) {
+      btn.textContent = lang === 'hi' ? 'EN' : 'हिं';
     }
   }
 
-  let currentLang = getStoredLanguage();
+  function toggleGlobalLanguage() {
+    const current = getStoredLanguage();
+    const next = current === 'hi' ? 'en' : 'hi';
+    setStoredLanguage(next);
+    applyGlobalLanguage(next);
+  }
 
-  const langToggleBtn = document.getElementById('langToggle');
-  langToggleBtn.addEventListener('click', () => {
-    currentLang = currentLang === 'en' ? 'hi' : 'en';
-    setStoredLanguage(currentLang);
-    applyGlobalLanguage(currentLang);
-  });
-
-  // Page load hote hi pichle page ya storage ke hisaab se language set hogi
   (function(){
+    const currentLang = getStoredLanguage();
     applyGlobalLanguage(currentLang);
   })();
 
-  // ---------- dummy "database" ----------
-  const dummyFarmerDB = [
-    { mobile:"9876543210", name:"Suresh Patel", village:"Rampur" },
-    { mobile:"9123456789", name:"Meena Devi", village:"Sultanpur" }
+  // ---------- Voice Intents ----------
+  const INTENTS = [
+    {
+      route: 'tracking.html',
+      confirmation: 'लाइव ट्रैकिंग पेज खोल रहे हैं।',
+      keywords: ['tracking', 'live tracking', 'payment', 'paisa', 'status', 'rsiid', 'receipt', 'ट्रैकिंग', 'पैसा', 'भुगतान', 'रसीद', 'स्टेटस', 'बिल']
+    },
+    {
+      route: 'visual-login.html',
+      confirmation: 'फसल बेचने का फॉर्म खोल रहे हैं।',
+      keywords: ['fasal', 'bechna', 'sell', 'registration', 'entry', 'फसल', 'बेचना', 'रजिस्ट्रेशन', 'फॉर्म']
+    },
+    {
+      route: 'index.html',
+      confirmation: 'मुख्य पृष्ठ पर ले जा रहे हैं।',
+      keywords: ['home', 'wapas', 'mukhy', 'shuru', 'help', 'madad', 'होम', 'वापस', 'मुख्य', 'मदद', 'शुरू']
+    }
   ];
 
-  // ---------- mobile nav toggle ----------
-  const navToggle = document.getElementById('navToggle');
-  const navLinks = document.getElementById('navLinks');
-  navToggle.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('nav-open');
-    navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  });
+  function handleVoiceCommand(transcript) {
+    const text = transcript.toLowerCase().trim();
+    let matchedRoute = null;
 
-  function switchTab(tab){
-    const reg = document.getElementById('registerForm');
-    const log = document.getElementById('loginForm');
-    const tR = document.getElementById('tabRegister');
-    const tL = document.getElementById('tabLogin');
-    if(tab === 'register'){
-      reg.classList.remove('hidden'); log.classList.add('hidden');
-      tR.classList.add('active'); tL.classList.remove('active');
+    for (const intent of INTENTS) {
+      for (const kw of intent.keywords) {
+        if (text.includes(kw)) {
+          matchedRoute = intent;
+          break;
+        }
+      }
+      if (matchedRoute) break;
+    }
+
+    if (matchedRoute) {
+      try {
+        const utter = new SpeechSynthesisUtterance(matchedRoute.confirmation);
+        utter.lang = 'hi-IN';
+        window.speechSynthesis.speak(utter);
+      } catch(e){}
+      setTimeout(() => {
+        window.location.href = matchedRoute.route;
+      }, 800);
     } else {
-      log.classList.remove('hidden'); reg.classList.add('hidden');
-      tL.classList.add('active'); tR.classList.remove('active');
+      try {
+        const utter = new SpeechSynthesisUtterance('माफ़ कीजिए, समझ नहीं पाया। कृपया दोबारा बोलें।');
+        utter.lang = 'hi-IN';
+        window.speechSynthesis.speak(utter);
+      } catch(e){}
     }
   }
 
-  // ---------- live ID card sync ----------
-  function syncCard(){
-    const name = document.getElementById('fullName').value.trim();
-    const mobile = document.getElementById('mobile').value.trim();
-    const aadhaar = document.getElementById('aadhaar').value.trim();
-    const village = document.getElementById('village').value.trim();
-    const crop = document.getElementById('cropType').value;
+  (function(){
+    var micBtn = document.getElementById('gfva-mic-btn');
+    var statusBubble = document.getElementById('gfva-status');
+    var SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    document.getElementById('cardName').textContent = name || '— Naam —';
-    document.getElementById('cardVillage').textContent = 'Gaon: ' + (village || '—');
-    document.getElementById('cardMobile').textContent = mobile ? maskMobile(mobile) : '—';
-    document.getElementById('cardAadhaar').textContent = aadhaar ? maskAadhaar(aadhaar) : '—';
-    document.getElementById('cardCrop').textContent = crop || '—';
-  }
+    if(!SpeechAPI) return;
 
-  function maskMobile(m){
-    if(m.length < 4) return m;
-    return 'XXXXXX' + m.slice(-4);
-  }
-  function maskAadhaar(a){
-    if(a.length < 4) return a;
-    return 'XXXX XXXX ' + a.slice(-4);
-  }
+    var rec = new SpeechAPI();
+    rec.lang = 'hi-IN';
+    rec.continuous = false;
+    rec.interimResults = false;
 
-  // ---------- validation ----------
-  function setError(id, show){
-    const errEl = document.getElementById('err-' + id);
-    const inputEl = document.getElementById(id);
-    if(errEl) errEl.classList.toggle('hidden', !show);
-    if(inputEl) inputEl.classList.toggle('error', show);
-  }
-
-  document.getElementById('registerForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    let valid = true;
-
-    const fullName = document.getElementById('fullName').value.trim();
-    const mobile = document.getElementById('mobile').value.trim();
-    const aadhaar = document.getElementById('aadhaar').value.trim();
-    const village = document.getElementById('village').value.trim();
-    const cropType = document.getElementById('cropType').value;
-    const consent = document.getElementById('consent').checked;
-
-    if(fullName.length < 3){ setError('fullName', true); valid = false; } else setError('fullName', false);
-    if(!/^\d{10}$/.test(mobile)){ setError('mobile', true); valid = false; } else setError('mobile', false);
-    if(aadhaar.length < 4){ setError('aadhaar', true); valid = false; } else setError('aadhaar', false);
-    if(village.length < 2){ setError('village', true); valid = false; } else setError('village', false);
-    if(!cropType){ setError('cropType', true); valid = false; } else setError('cropType', false);
-    if(!consent){ setError('consent', true); valid = false; } else setError('consent', false);
-
-    if(!valid) return;
-
-    // simulate registration id + DB save
-    const regId = 'KP-' + Math.floor(100000 + Math.random()*900000);
-    document.getElementById('cardId').textContent = regId;
-    dummyFarmerDB.push({ mobile, name: fullName, village });
-
-    // stamp animation
-    const stamp = document.getElementById('stamp');
-    stamp.classList.remove('show');
-    void stamp.offsetWidth;
-    setTimeout(() => stamp.classList.add('show'), 150);
-
-    // SMS toast
-    document.getElementById('smsBody').textContent =
-      `Namaste ${fullName.split(' ')[0]}, aapka panjikaran safaltapoorvak ho gaya hai! Panjikaran ID: ${regId}`;
-    showToast();
-
-    // Save the farmer's name so booking.html can greet them
-    localStorage.setItem('farmerName', fullName);
-
-    setTimeout(() => {
-      window.location.href = 'booking.html';
-    }, 1600);
-  });
-
-  document.getElementById('loginForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    let valid = true;
-    const mobile = document.getElementById('loginMobile').value.trim();
-    const otp = document.getElementById('loginOtp').value.trim();
-
-    if(!/^\d{10}$/.test(mobile)){ setError('loginMobile', true); valid = false; } else setError('loginMobile', false);
-    if(!/^\d{6}$/.test(otp)){ setError('loginOtp', true); valid = false; } else setError('loginOtp', false);
-
-    if(!valid) return;
-
-    const farmer = dummyFarmerDB.find(f => f.mobile === mobile);
-    const loginName = farmer ? farmer.name : 'Kisan Mitra';
-
-    document.getElementById('smsBody').textContent = farmer
-      ? `Swagat hai, ${farmer.name}! Aap safaltapoorvak login ho gaye hain.`
-      : `Login safal. Naye upyogkarta ke roop mein swagat hai!`;
-    showToast();
-
-    localStorage.setItem('farmerName', loginName);
-
-    setTimeout(() => {
-      window.location.href = 'booking.html';
-    }, 1600);
-  });
-
-  function sendOtp(){
-    const mobile = document.getElementById('loginMobile').value.trim();
-    if(!/^\d{10}$/.test(mobile)){ setError('loginMobile', true); return; }
-    setError('loginMobile', false);
-    document.getElementById('smsBody').textContent = `Aapka OTP hai: ${Math.floor(100000+Math.random()*900000)} (demo)`;
-    showToast();
-  }
-
-  function showToast(){
-    const toast = document.getElementById('smsToast');
-    toast.classList.add('show');
-    clearTimeout(window.__toastTimer);
-    window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 4200);
-  }
-</script>
-
-<style>
-  #gfva-root, #gfva-root * {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-  }
-  #gfva-root {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 999999;
-  }
-  .gfva-mic-btn {
-    width: 68px;
-    height: 68px;
-    border-radius: 9999px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #16a34a 0%, #ea580c 100%);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-  }
-  .gfva-mic-btn:hover {
-    transform: scale(1.06);
-    box-shadow: 0 8px 22px rgba(0,0,0,0.3);
-  }
-  .gfva-mic-btn:active {
-    transform: scale(0.96);
-  }
-  .gfva-mic-icon {
-    width: 28px;
-    height: 28px;
-    fill: #ffffff;
-  }
-  .gfva-pulse-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    border: 3px solid #16a34a;
-    opacity: 0;
-    pointer-events: none;
-  }
-  #gfva-root.gfva-listening .gfva-pulse-ring {
-    animation: gfva-pulse-anim 1.4s ease-out infinite;
-  }
-  #gfva-root.gfva-listening .gfva-pulse-ring.gfva-ring-delay {
-    animation-delay: 0.5s;
-  }
-  @keyframes gfva-pulse-anim {
-    0%   { transform: scale(1);   opacity: 0.6; }
-    100% { transform: scale(1.8); opacity: 0; }
-  }
-  #gfva-root.gfva-listening .gfva-mic-btn {
-    background: linear-gradient(135deg, #ea580c 0%, #16a34a 100%);
-    box-shadow: 0 0 0 6px rgba(234, 88, 12, 0.25), 0 6px 18px rgba(0,0,0,0.3);
-  }
-  .gfva-status-bubble {
-    position: absolute;
-    bottom: 80px;
-    right: 0;
-    max-width: 240px;
-    background: #ffffff;
-    color: #1f2937;
-    font-size: 13px;
-    line-height: 1.4;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-    opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    pointer-events: none;
-  }
-  .gfva-status-bubble.gfva-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
-
-<div id="gfva-root">
-  <div class="gfva-status-bubble" id="gfva-status">नमस्ते! बोलने के लिए माइक दबाएं</div>
-
-  <button type="button" class="gfva-mic-btn" id="gfva-mic-btn" aria-label="Voice Assistant">
-    <span class="gfva-pulse-ring"></span>
-    <span class="gfva-pulse-ring gfva-ring-delay"></span>
-    <svg class="gfva-mic-icon" viewBox="0 0 24 24">
-      <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
-      <path d="M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V20H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-2.08A7 7 0 0 0 19 11z"/>
-    </svg>
-  </button>
-</div>
-
-<script>
-(function () {
-  var root       = document.getElementById('gfva-root');
-  var micBtn     = document.getElementById('gfva-mic-btn');
-  var statusEl   = document.getElementById('gfva-status');
-
-  var SpeechRecognitionAPI = window.webkitSpeechRecognition || window.SpeechRecognition;
-
-  function showStatus(text, autoHideMs) {
-    statusEl.textContent = text;
-    statusEl.classList.add('gfva-visible');
-    if (autoHideMs) {
-      clearTimeout(showStatus._t);
-      showStatus._t = setTimeout(function () {
-        statusEl.classList.remove('gfva-visible');
-      }, autoHideMs);
-    }
-  }
-
-  function speak(text, onEnd) {
-    try {
-      window.speechSynthesis.cancel();
-      var utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'hi-IN';
-      utter.rate = 1;
-      utter.pitch = 1;
-      if (onEnd) utter.onend = onEnd;
-      window.speechSynthesis.speak(utter);
-    } catch (e) {
-      if (onEnd) onEnd();
-    }
-  }
-
-  function routeFromTranscript(transcript) {
-    var t = transcript.toLowerCase();
-
-    var routes = [
-      { keywords: ['टोकन', 'नंबर', 'कतार'], page: 'queue.html' },
-      { keywords: ['स्टेटस', 'ट्रैक', 'पैसे', 'रसीद'], page: 'tracking.html' },
-      { keywords: ['होम', 'शुरू', 'वापस'], page: 'index.html' },
-      { keywords: ['बुक', 'बेचना', 'स्लॉट'], page: 'booking.html' }
-    ];
-
-    for (var i = 0; i < routes.length; i++) {
-      var match = routes[i].keywords.some(function (kw) {
-        return t.indexOf(kw) !== -1;
-      });
-      if (match) {
-        showStatus('जा रहे हैं: ' + routes[i].page, 2000);
-        speak('ठीक है, ले जा रहे हैं', function () {
-          window.location.href = routes[i].page;
-        });
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function startListening() {
-    if (!SpeechRecognitionAPI) {
-      showStatus('माफ़ कीजिये, यह ब्राउज़र वॉइस को सपोर्ट नहीं करता', 4000);
-      return;
-    }
-
-    var recognition = new SpeechRecognitionAPI();
-    recognition.lang = 'hi-IN';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = function () {
-      root.classList.add('gfva-listening');
-      showStatus('सुन रहे हैं...');
+    micBtn.onclick = function(){
+      try {
+        window.speechSynthesis.cancel();
+        rec.start();
+      } catch(e){}
     };
 
-    recognition.onresult = function (event) {
-      var transcript = event.results[0][0].transcript || '';
-      showStatus('आपने कहा: "' + transcript + '"');
-
-      var routed = routeFromTranscript(transcript);
-      if (!routed) {
-        showStatus('माफ़ कीजिये, समझ नहीं आया। कृपया फिर बोलें', 3500);
-        speak('माफ़ कीजिये, मुझे समझ नहीं आया');
-      }
+    rec.onstart = function(){
+      statusBubble.textContent = "सुन रहे हैं...";
+      statusBubble.classList.add('show');
     };
 
-    recognition.onerror = function () {
-      showStatus('कुछ गड़बड़ हुई, दोबारा कोशिश करें', 3000);
+    rec.onresult = function(e){
+      var text = e.results[0][0].transcript || '';
+      statusBubble.textContent = 'सुना: "' + text + '"';
+      handleVoiceCommand(text);
     };
 
-    recognition.onend = function () {
-      root.classList.remove('gfva-listening');
+    rec.onerror = function(){
+      statusBubble.textContent = "दोबारा बोलें";
     };
 
-    try {
-      recognition.start();
-    } catch (e) {
-      root.classList.remove('gfva-listening');
-      showStatus('माइक शुरू नहीं हो सका', 3000);
-    }
-  }
-
-  micBtn.addEventListener('click', function () {
-    speak('हाँ, बताइये?', startListening);
-  });
-})();
+    rec.onend = function(){
+      setTimeout(function(){
+        statusBubble.classList.remove('show');
+      }, 2500);
+    };
+  })();
 </script>
 </body>
 </html>
