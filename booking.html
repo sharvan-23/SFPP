@@ -514,26 +514,29 @@ function matchIntent(transcript) {
 }
 
 function speakAndRedirect(intent) {
-  const utterance = new SpeechSynthesisUtterance(intent.confirmation);
-  utter.lang = 'hi-IN';
-  utter.rate = 0.95;
+  try {
+    const utterance = new SpeechSynthesisUtterance(intent.confirmation);
+    utter.lang = 'hi-IN';
+    utter.rate = 0.95;
+    const voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(v => v.lang === 'hi-IN');
+    if (hindiVoice) utterance.voice = hindiVoice;
+    window.speechSynthesis.speak(utterance);
+  } catch (e) {}
 
-  const voices = window.speechSynthesis.getVoices();
-  const hindiVoice = voices.find(v => v.lang === 'hi-IN');
-  if (hindiVoice) utterance.voice = hindiVoice;
-
-  window.speechSynthesis.speak(utterance);
-
+  // Fast & Instant Redirect without freezing
   setTimeout(() => {
     window.location.href = intent.route;
-  }, 1500);
+  }, 800);
 }
 
 function speakUnrecognized() {
-  const msg = 'माफ़ कीजिए, समझ नहीं पाया। कृपया दोबारा बोलें।';
-  const utterance = new SpeechSynthesisUtterance(msg);
-  utter.lang = 'hi-IN';
-  window.speechSynthesis.speak(utterance);
+  try {
+    const msg = 'माफ़ कीजिए, समझ नहीं पाया। कृपया दोबारा बोलें।';
+    const utterance = new SpeechSynthesisUtterance(msg);
+    utter.lang = 'hi-IN';
+    window.speechSynthesis.speak(utterance);
+  } catch(e) {}
 }
 
 function handleVoiceCommand(transcript) {
