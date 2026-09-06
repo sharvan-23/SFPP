@@ -8,21 +8,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* Sky, dawn to noon */
     --sky-top: #2f7cc9;
     --sky-mid: #7fb8e8;
     --sky-glow: #ffd98a;
-    /* Field */
     --field: #2f7a35;
     --field-deep: #1f5a26;
     --field-dry: #c9a227;
-    /* Earth / accents */
     --soil: #6b4226;
     --sun: #ffb347;
     --paper: #fff8e8;
     --ink: #1c2b18;
     --ink-soft: #3a4a34;
-
     --radius-lg: 28px;
     --radius-md: 18px;
   }
@@ -41,7 +37,6 @@
     overflow-x: hidden;
   }
 
-  /* ---------- Sky + field backdrop ---------- */
   .scene{
     position: relative;
     min-height: 100svh;
@@ -111,7 +106,6 @@
   }
   .stalks svg{ height: 100%; }
 
-  /* ---------- Content ---------- */
   .content{
     position: relative;
     z-index: 2;
@@ -167,7 +161,6 @@
     text-shadow: 0 1px 6px rgba(0,0,0,0.18);
   }
 
-  /* ---------- Dual entry ---------- */
   .entries{
     display: flex;
     flex-direction: column;
@@ -194,7 +187,6 @@
     outline-offset: 3px;
   }
 
-  /* Primary: voice / thumbprint entry — large, unmistakable */
   .entry--voice{
     padding: 26px 22px;
     border-radius: var(--radius-lg);
@@ -242,7 +234,6 @@
     margin-top: 3px;
   }
 
-  /* Secondary: literate / form entry — calm, clear, still generous tap target */
   .entry--manual{
     padding: 20px 22px;
     border-radius: var(--radius-md);
@@ -336,19 +327,19 @@
     </header>
 
     <div class="entries">
-      <button class="entry entry--voice" onclick="window.location.href='visual-login.html'">
+      <button class="entry entry--voice" onclick="selectMode('voice', 'visual-login.html')">
         <span class="icon-wrap">
           <span class="pulse-ring" aria-hidden="true"></span>
           🎙️
         </span>
         <span class="entry-text">
-          <span class="headline">किसान  कार्ड या अंगूठे से चलाएं</span>
+          <span class="headline">किसान कार्ड या अंगूठे से चलाएं</span>
           <span class="note">पढ़ना-लिखना ज़रूरी नहीं</span>
         </span>
         <span class="arrow" aria-hidden="true">➜</span>
       </button>
 
-      <button class="entry entry--manual" onclick="window.location.href='manual-login.html'">
+      <button class="entry entry--manual" onclick="selectMode('manual', 'manual-login.html')">
         <span class="icon-wrap">✍️</span>
         <span class="entry-text">
           <span class="headline">लिखकर फॉर्म भरें</span>
@@ -363,6 +354,17 @@
     </footer>
   </div>
 </div>
+
+<script>
+  // Save preference to localStorage when starting
+  function selectMode(mode, url) {
+    try {
+      localStorage.setItem('kisan_mode', mode);
+      localStorage.setItem('kisan_lang', 'hi'); // Default setting Hindi
+    } catch(e) {}
+    window.location.href = url;
+  }
+</script>
 
 </body>
 </html>
