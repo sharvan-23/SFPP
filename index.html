@@ -53,6 +53,47 @@
     overflow: hidden;
   }
 
+  /* ---------- Language Switcher ---------- */
+  .lang-nav{
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 30;
+  }
+  .lang-toggle{
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(3px);
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+  .lang-toggle button{
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-family: 'Hind', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 6px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: background 0.2s ease, color 0.2s ease, text-shadow 0.2s ease;
+  }
+  .lang-toggle button.active{
+    background: #fff;
+    color: var(--field-deep);
+    text-shadow: none;
+  }
+  .lang-toggle button:focus-visible{
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
   .sun{
     position: absolute;
     top: 8%;
@@ -297,6 +338,15 @@
 <body>
 
 <div class="scene">
+
+  <!-- Global Language Switcher -->
+  <nav class="lang-nav" aria-label="Language selector">
+    <div class="lang-toggle">
+      <button id="langHiBtn" onclick="setLanguage('hi')" aria-pressed="true">हिं</button>
+      <button id="langEnBtn" onclick="setLanguage('en')" aria-pressed="false">EN</button>
+    </div>
+  </nav>
+
   <div class="sun" aria-hidden="true"></div>
 
   <div class="birds" aria-hidden="true">
@@ -321,9 +371,9 @@
 
   <div class="content">
     <header>
-      <span class="badge">🌾 किसान खरीद सेवा</span>
-      <h1>अपनी फसल बेचें, सीधे और आसानी से</h1>
-      <p class="sub">सही दाम, सीधा भुगतान — शुरू करने के लिए अपना तरीका चुनें</p>
+      <span class="badge" data-hi="🌾 किसान खरीद सेवा" data-en="🌾 Kisan Procurement Service">🌾 किसान खरीद सेवा</span>
+      <h1 data-hi="अपनी फसल बेचें, सीधे और आसानी से" data-en="Sell your crop, directly and easily">अपनी फसल बेचें, सीधे और आसानी से</h1>
+      <p class="sub" data-hi="सही दाम, सीधा भुगतान — शुरू करने के लिए अपना तरीका चुनें" data-en="Fair price, direct payment — choose your method to start">सही दाम, सीधा भुगतान — शुरू करने के लिए अपना तरीका चुनें</p>
     </header>
 
     <div class="entries">
@@ -333,8 +383,8 @@
           🎙️
         </span>
         <span class="entry-text">
-          <span class="headline">किसान कार्ड या अंगूठे से चलाएं</span>
-          <span class="note">पढ़ना-लिखना ज़रूरी नहीं</span>
+          <span class="headline" data-hi="किसान कार्ड या अंगूठे से चलाएं" data-en="Use Kisan Card or Thumbprint">किसान कार्ड या अंगूठे से चलाएं</span>
+          <span class="note" data-hi="पढ़ना-लिखना ज़रूरी नहीं" data-en="No reading or writing needed">पढ़ना-लिखना ज़रूरी नहीं</span>
         </span>
         <span class="arrow" aria-hidden="true">➜</span>
       </button>
@@ -342,25 +392,64 @@
       <button class="entry entry--manual" onclick="selectMode('manual', 'manual-login.html')">
         <span class="icon-wrap">✍️</span>
         <span class="entry-text">
-          <span class="headline">लिखकर फॉर्म भरें</span>
-          <span class="note">मोबाइल नंबर और जानकारी दर्ज करें</span>
+          <span class="headline" data-hi="लिखकर फॉर्म भरें" data-en="Fill the form by typing">लिखकर फॉर्म भरें</span>
+          <span class="note" data-hi="मोबाइल नंबर और जानकारी दर्ज करें" data-en="Enter mobile number and details">मोबाइल नंबर और जानकारी दर्ज करें</span>
         </span>
         <span class="arrow" aria-hidden="true">➜</span>
       </button>
     </div>
 
-    <footer>
+    <footer data-hi="किसी भी समस्या के लिए अपने नज़दीकी <strong>खरीद केंद्र</strong> पर संपर्क करें" data-en="For any issue, contact your nearest <strong>Procurement Center</strong>">
       किसी भी समस्या के लिए अपने नज़दीकी <strong>खरीद केंद्र</strong> पर संपर्क करें
     </footer>
   </div>
 </div>
 
 <script>
-  // Save preference to localStorage when starting
+  var currentLang = 'hi';
+
+  // Language switcher: updates all elements with data-hi / data-en,
+  // persists choice in localStorage under 'kisan_lang'
+  function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.setAttribute('lang', lang);
+
+    document.querySelectorAll('[data-hi]').forEach(function(el){
+      var text = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-hi');
+      // footer has an inline <strong> tag, so use innerHTML there; plain text elsewhere
+      if (el.querySelector('strong') || /<strong>/.test(text)) {
+        el.innerHTML = text;
+      } else {
+        el.textContent = text;
+      }
+    });
+
+    var hiBtn = document.getElementById('langHiBtn');
+    var enBtn = document.getElementById('langEnBtn');
+    hiBtn.classList.toggle('active', lang === 'hi');
+    enBtn.classList.toggle('active', lang === 'en');
+    hiBtn.setAttribute('aria-pressed', lang === 'hi');
+    enBtn.setAttribute('aria-pressed', lang === 'en');
+
+    try {
+      localStorage.setItem('kisan_lang', lang);
+    } catch(e) {}
+  }
+
+  // On load, restore previously chosen language (defaults to Hindi)
+  (function initLanguage(){
+    var saved = 'hi';
+    try {
+      saved = localStorage.getItem('kisan_lang') || 'hi';
+    } catch(e) {}
+    setLanguage(saved);
+  })();
+
+  // Save mode preference; language is already tracked by setLanguage()
   function selectMode(mode, url) {
     try {
       localStorage.setItem('kisan_mode', mode);
-      localStorage.setItem('kisan_lang', 'hi'); // Default setting Hindi
+      localStorage.setItem('kisan_lang', currentLang);
     } catch(e) {}
     window.location.href = url;
   }
