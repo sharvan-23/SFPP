@@ -254,7 +254,7 @@
         <button onclick="closeModal()" class="text-[#8a7a5f] hover:text-[--ink] text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="mt-4 border-t-2 border-dashed border-[#D8CBAE] pt-4 space-y-3 text-sm">
-        <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Farmer" data-hi="किसान">Farmer</span><span class="font-semibold">Ramesh Kumar</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Farmer" data-hi="किसान">Farmer</span><span class="font-semibold">naresh malik</span></div>
         <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Center" data-hi="केंद्र">Center</span><span class="font-semibold text-right" id="sumCenter">—</span></div>
         <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Date" data-hi="तारीख">Tareekh</span><span class="font-semibold font-mono" id="sumDate">—</span></div>
         <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Time" data-hi="समय">Samay</span><span class="font-semibold" id="sumSlot">—</span></div>
@@ -269,16 +269,7 @@
   </div>
 </div>
 
-<!-- SMS toast -->
-<div id="smsToast" class="sms-toast fixed bottom-5 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-white border-2 rounded-2xl shadow-2xl p-4 flex gap-3 z-50" style="border-color:var(--leaf)">
-  <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:var(--leaf)">
-    <i class="fa-solid fa-comment-sms text-white"></i>
-  </div>
-  <div>
-    <p class="text-xs font-semibold" style="color:var(--leaf)">Kisan Kendra <span class="text-[#8a7a5f] font-normal">· abhi</span></p>
-    <p class="text-sm mt-0.5" id="smsBody" data-en="Slot booked successfully. SMS sent." data-hi="स्लॉट सफलतापूर्वक बुक हो गया। एसएमएस भेज दिया गया है।">Slot booked successfully. SMS sent.</p>
-  </div>
-</div>
+
 
 <!-- GLOBAL FLOATING VOICE ASSISTANT -->
 <div id="gfva-root">
@@ -464,12 +455,6 @@
     window.location.href = 'queue.html';
   }
 
-  function showToast(){
-    const toast = document.getElementById('smsToast');
-    toast.classList.add('show');
-    clearTimeout(window.__toastTimer);
-    window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 4500);
-  }
 
   document.getElementById('modalBackdrop').addEventListener('click', (e) => {
     if(e.target.id === 'modalBackdrop') closeModal();
