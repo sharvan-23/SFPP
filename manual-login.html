@@ -465,10 +465,7 @@
     void stamp.offsetWidth;
     setTimeout(() => stamp.classList.add('show'), 150);
 
-    // SMS toast
-    document.getElementById('smsBody').textContent =
-      `Namaste ${fullName.split(' ')[0]}, aapka panjikaran safaltapoorvak ho gaya hai! Panjikaran ID: ${regId}`;
-    showToast();
+ 
 
     // Save the farmer's name so booking.html can greet them
     localStorage.setItem('farmerName', fullName);
