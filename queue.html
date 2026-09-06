@@ -415,7 +415,7 @@
       <span class="dot"></span>
       <span>किसान संग्रहण सेवा</span>
     </div>
-    <a href="index.html" class="back-btn">← होम</a>
+    <a href="index.html" class="appbar back-btn" style="all:unset; cursor:pointer; text-decoration:none; color:var(--cream); background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); padding:8px 14px; border-radius:999px; font-size:0.85rem; font-weight:600;">← होम</a>
   </header>
 
   <div class="page-heading">
@@ -482,7 +482,8 @@
 
     <!-- Actions -->
     <section class="actions">
-      <a href="sell.html" class="btn btn-primary">🌾 फसल बेचना शुरू करें</a>
+      <a href="tracking.html" class="btn btn-primary" style="background:var(--sun); color:var(--field-dark); box-shadow:0 8px 20px rgba(242,180,65,0.35);">📊 Live Tracking &amp; Payment Status</a>
+      <a href="visual-login.html" class="btn btn-secondary">🌾 फसल बेचना शुरू करें</a>
       <a href="index.html" class="btn btn-secondary">🏠 होम पर वापस जाएं</a>
     </section>
   </main>
@@ -492,19 +493,19 @@
     <a href="index.html" class="nav-item">
       <span class="icon">🏠</span> होम
     </a>
-    <a href="sell.html" class="nav-item">
+    <a href="visual-login.html" class="nav-item">
       <span class="icon">🌾</span> बेचना
     </a>
     <a href="queue.html" class="nav-item active">
       <span class="icon">🎫</span> क्यू
     </a>
-    <a href="profile.html" class="nav-item">
-      <span class="icon">👤</span> प्रोफ़ाइल
+    <a href="tracking.html" class="nav-item">
+      <span class="icon">📊</span> ट्रैकिंग
     </a>
   </nav>
 
   <!-- Floating Voice Assistant -->
-  <button id="voice-fab" aria-label="Voice assistant / आवाज़ सहायक" title="बोलें: होम, बेचना, क्यू">🎙️</button>
+  <button id="voice-fab" aria-label="Voice assistant / आवाज़ सहायक" title="बोलें: होम, बेचना, ट्रैकिंग, क्यू">🎙️</button>
   <div id="voice-toast"></div>
 
   <script>
@@ -522,14 +523,11 @@
       }, duration || 2600);
     }
 
-    // Lightweight command map — voice → destination.
-    // Farmers can say Hindi words like "होम" or "बेचना" to navigate
-    // without a heavy full-screen routing overlay.
     var commandMap = [
       { patterns: ['होम', 'home', 'ghar', 'घर'], href: 'index.html', label: 'होम पेज खोल रहे हैं...' },
-      { patterns: ['बेचना', 'बेचो', 'sell', 'fasal'], href: 'sell.html', label: 'बेचना पेज खोल रहे हैं...' },
+      { patterns: ['बेचना', 'बेचो', 'sell', 'fasal', 'फसल'], href: 'visual-login.html', label: 'बेचना पेज खोल रहे हैं...' },
       { patterns: ['क्यू', 'कतार', 'queue', 'token', 'टोकन'], href: 'queue.html', label: 'आप पहले से क्यू पेज पर हैं' },
-      { patterns: ['प्रोफ़ाइल', 'profile', 'account'], href: 'profile.html', label: 'प्रोफ़ाइल खोल रहे हैं...' }
+      { patterns: ['ट्रैकिंग', 'tracking', 'payment', 'पैसा', 'भुगतान', 'रसीद'], href: 'tracking.html', label: 'लाइव ट्रैकिंग पेज खोल रहे हैं...' }
     ];
 
     function handleTranscript(transcript){
@@ -539,6 +537,12 @@
         for (var j = 0; j < cmd.patterns.length; j++){
           if (text.indexOf(cmd.patterns[j].toLowerCase()) !== -1){
             showToast(cmd.label);
+            try {
+              var utter = new SpeechSynthesisUtterance(cmd.label);
+              utter.lang = 'hi-IN';
+              window.speechSynthesis.speak(utter);
+            } catch(e){}
+
             if (cmd.href !== 'queue.html'){
               setTimeout(function(dest){
                 return function(){ window.location.href = dest; };
@@ -548,16 +552,15 @@
           }
         }
       }
-      showToast('माफ़ करें, समझ नहीं आया। "होम" या "बेचना" कहें।', 3000);
+      showToast('माफ़ करें, समझ नहीं आया। "होम", "बेचना" या "ट्रैकिंग" कहें।', 3000);
       return false;
     }
 
     var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition){
-      // Graceful fallback: tapping opens a tiny prompt instead of full-screen routing.
       fab.addEventListener('click', function(){
-        var typed = window.prompt('आवाज़ सहायक उपलब्ध नहीं है। टाइप करें: होम / बेचना / क्यू / प्रोफ़ाइल');
+        var typed = window.prompt('आवाज़ सहायक उपलब्ध नहीं है। टाइप करें: होम / बेचना / क्यू / ट्रैकिंग');
         if (typed) handleTranscript(typed);
       });
       return;
@@ -574,7 +577,7 @@
     recognition.onstart = function(){
       isListening = true;
       fab.classList.add('listening');
-      showToast('सुन रहे हैं... बोलें "होम" या "बेचना"', 4000);
+      showToast('सुन रहे हैं... बोलें "होम", "बेचना" या "ट्रैकिंग"', 4000);
     };
 
     recognition.onresult = function(event){
@@ -598,9 +601,7 @@
       }
       try{
         recognition.start();
-      }catch(e){
-        // Recognition already running or blocked — ignore silently.
-      }
+      }catch(e){}
     });
   })();
   </script>
