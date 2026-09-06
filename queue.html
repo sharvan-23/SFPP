@@ -2,10 +2,11 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>किसान सेवा — कतार और टोकन</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>क्यू स्थिति | Kisan Procurement Service</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --sky-top:#274B63;
@@ -13,249 +14,596 @@
     --field:#1F3D2C;
     --field-dark:#152A1E;
     --sun:#F2B441;
-    --sun-soft:#F7CE7A;
     --cream:#FBF4E4;
-    --cream-dim:#D9CDAE;
-    --leaf:#5C9A63;
-    --alert:#C1440E;
     --ink:#122016;
   }
-  *{box-sizing:border-box;}
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
   html,body{
-    margin:0;
-    padding:0;
     height:100%;
     font-family:'Hind',sans-serif;
     color:var(--cream);
-  }
-  body{
+    background:
+      radial-gradient(circle at 82% 8%, rgba(242,180,65,0.55) 0%, rgba(242,180,65,0) 32%),
+      linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 42%, var(--field) 68%, var(--field-dark) 100%);
     min-height:100vh;
-    min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  body{
     display:flex;
     flex-direction:column;
+    max-width:520px;
+    margin:0 auto;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* --- Top App Bar --- */
+  .appbar{
+    display:flex;
     align-items:center;
     justify-content:space-between;
-    background:linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 46%, var(--field) 47%, var(--field-dark) 100%);
-    padding: 24px;
+    padding:18px 20px 10px;
   }
 
-  header{
-    text-align:center;
+  .appbar .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
   }
-  .brand{
-    font-family:'Baloo 2',sans-serif;
+
+  .brand .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--sun);
+    box-shadow:0 0 10px 2px rgba(242,180,65,0.6);
+  }
+
+  .brand span{
+    font-family:'Baloo 2',cursive;
     font-weight:700;
-    font-size:22px;
-    color:var(--sun-soft);
-    margin:0;
+    font-size:1.05rem;
+    letter-spacing:0.3px;
   }
-  .brand span{color:var(--cream);}
 
-  /* --- Token Card Box --- */
+  .appbar .back-btn{
+    text-decoration:none;
+    color:var(--cream);
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.18);
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:0.85rem;
+    font-weight:600;
+  }
+
+  /* --- Page heading --- */
+  .page-heading{
+    padding:6px 20px 4px;
+  }
+  .page-heading h1{
+    font-family:'Baloo 2',cursive;
+    font-size:1.4rem;
+    font-weight:700;
+    color:var(--sun);
+  }
+  .page-heading p{
+    font-size:0.85rem;
+    opacity:0.8;
+    margin-top:2px;
+  }
+
   main{
-    width:100%;
-    max-width:420px;
+    flex:1;
+    padding:14px 20px 100px;
     display:flex;
     flex-direction:column;
-    align-items:center;
     gap:20px;
   }
 
-  .token-card{
-    width:100%;
-    background:rgba(18,32,22,0.75);
-    border:2px solid rgba(242,180,65,0.3);
-    backdrop-filter:blur(8px);
-    border-radius:24px;
-    padding:28px 20px;
+  /* --- Token Ticket Card --- */
+  .ticket{
+    position:relative;
+    background:linear-gradient(160deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:22px;
+    padding:26px 22px 22px;
     text-align:center;
-    box-shadow:0 12px 30px rgba(0,0,0,0.4);
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
   }
 
-  .token-title{
-    font-size:16px;
-    color:var(--cream-dim);
-    margin:0 0 8px;
-    font-weight:500;
+  .ticket::before, .ticket::after{
+    content:"";
+    position:absolute;
+    width:26px;height:26px;
+    background:var(--field-dark);
+    border-radius:50%;
+    top:50%;
+    transform:translateY(-50%);
+  }
+  .ticket::before{ left:-13px; }
+  .ticket::after{ right:-13px; }
+
+  .status-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(242,180,65,0.16);
+    border:1px solid rgba(242,180,65,0.5);
+    color:var(--sun);
+    font-size:0.78rem;
+    font-weight:600;
+    padding:6px 14px;
+    border-radius:999px;
+    margin-bottom:14px;
+  }
+
+  .status-badge .pulse{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:var(--sun);
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(242,180,65,0.6); }
+    70%{ box-shadow:0 0 0 8px rgba(242,180,65,0); }
+    100%{ box-shadow:0 0 0 0 rgba(242,180,65,0); }
+  }
+
+  .token-label{
+    font-size:0.85rem;
+    opacity:0.75;
+    letter-spacing:0.5px;
+    margin-bottom:4px;
   }
 
   .token-number{
-    font-family:'Baloo 2',sans-serif;
-    font-size:56px;
-    font-weight:700;
-    color:var(--sun);
+    font-family:'Baloo 2',cursive;
+    font-weight:800;
+    font-size:4.4rem;
     line-height:1;
-    margin:0 0 16px;
+    color:var(--cream);
+    text-shadow:0 4px 18px rgba(242,180,65,0.35);
   }
 
-  .badge-status{
-    display:inline-block;
-    background:rgba(92,154,99,0.25);
-    border:1px solid var(--leaf);
-    color:#94e29d;
-    padding:6px 16px;
-    border-radius:99px;
-    font-size:14px;
+  .token-number sup{
+    font-size:1.6rem;
+    color:var(--sun);
+    top:-1.6rem;
+    margin-right:2px;
+  }
+
+  .divider-dash{
+    margin:16px 0;
+    border:none;
+    border-top:2px dashed rgba(255,255,255,0.2);
+  }
+
+  .center-name{
+    font-family:'Baloo 2',cursive;
     font-weight:600;
+    font-size:1.05rem;
+    color:var(--sun);
+  }
+  .center-sub{
+    font-size:0.8rem;
+    opacity:0.7;
+    margin-top:2px;
   }
 
-  .info-box{
-    width:100%;
-    background:rgba(255,255,255,0.06);
-    border-radius:16px;
-    padding:16px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    font-size:15px;
+  /* --- Info rows --- */
+  .info-card{
+    background:rgba(0,0,0,0.18);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:18px;
+    padding:6px 4px;
   }
+
   .info-row{
     display:flex;
-    justify-content:space-between;
-  }
-  .info-label{color:var(--cream-dim);}
-  .info-val{font-weight:600;color:var(--cream);}
-
-  /* --- Back button --- */
-  .back-btn{
-    display:inline-flex;
     align-items:center;
-    gap:8px;
-    text-decoration:none;
-    color:var(--ink);
-    background:var(--cream);
-    font-weight:600;
-    font-size:16px;
-    padding:12px 24px;
-    border-radius:99px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.25);
+    gap:14px;
+    padding:14px 14px;
+  }
+  .info-row + .info-row{
+    border-top:1px solid rgba(255,255,255,0.08);
   }
 
-  /* --- Floating Mini Mic (Bottom Right) --- */
-  #gfva-root{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    z-index:99999;
-  }
-  .gfva-mic-btn{
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    border:none;
-    cursor:pointer;
+  .info-icon{
+    width:40px;height:40px;
+    flex-shrink:0;
+    border-radius:12px;
+    background:rgba(242,180,65,0.15);
     display:flex;
     align-items:center;
     justify-content:center;
-    background:radial-gradient(circle at 32% 28%, var(--sun-soft), var(--sun) 65%);
-    box-shadow:0 6px 20px rgba(0,0,0,0.4);
-    transition:transform 0.2s ease;
+    font-size:1.2rem;
   }
-  .gfva-mic-btn:active{transform:scale(0.92);}
-  .gfva-mic-btn svg{width:26px;height:26px;}
-  
-  .gfva-status{
-    position:absolute;
-    right:72px;
-    bottom:10px;
-    background:#122016;
+
+  .info-text .label{
+    font-size:0.78rem;
+    opacity:0.7;
+  }
+  .info-text .value{
+    font-size:0.98rem;
+    font-weight:600;
     color:var(--cream);
-    padding:6px 12px;
-    border-radius:8px;
-    font-size:13px;
+    margin-top:2px;
+  }
+
+  /* --- Progress --- */
+  .progress-card{
+    background:rgba(0,0,0,0.18);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:18px;
+    padding:18px 18px 20px;
+  }
+
+  .progress-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:12px;
+  }
+  .progress-head h3{
+    font-family:'Baloo 2',cursive;
+    font-size:1rem;
+    color:var(--cream);
+  }
+  .progress-head span{
+    font-size:0.8rem;
+    color:var(--sun);
+    font-weight:600;
+  }
+
+  .progress-track{
+    width:100%;
+    height:12px;
+    background:rgba(255,255,255,0.12);
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:64%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--sun), #ffd98a);
+    box-shadow:0 0 12px rgba(242,180,65,0.5);
+  }
+
+  .progress-foot{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.75rem;
+    opacity:0.75;
+    margin-top:8px;
+  }
+
+  /* --- Actions --- */
+  .actions{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    text-decoration:none;
+    padding:14px 18px;
+    border-radius:14px;
+    font-weight:600;
+    font-size:0.95rem;
+    font-family:'Hind',sans-serif;
+    transition:transform 0.15s ease;
+  }
+  .btn:active{ transform:scale(0.98); }
+
+  .btn-primary{
+    background:var(--sun);
+    color:var(--field-dark);
+    box-shadow:0 8px 20px rgba(242,180,65,0.35);
+  }
+
+  .btn-secondary{
+    background:rgba(255,255,255,0.08);
     border:1px solid rgba(255,255,255,0.2);
-    white-space:nowrap;
+    color:var(--cream);
+  }
+
+  /* --- Bottom Nav --- */
+  .bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:100%;
+    max-width:520px;
+    display:flex;
+    justify-content:space-around;
+    background:rgba(21,42,30,0.92);
+    backdrop-filter:blur(10px);
+    border-top:1px solid rgba(255,255,255,0.1);
+    padding:10px 8px calc(10px + env(safe-area-inset-bottom));
+    z-index:40;
+  }
+
+  .nav-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    text-decoration:none;
+    color:rgba(251,244,228,0.6);
+    font-size:0.7rem;
+    font-weight:600;
+    padding:4px 10px;
+    border-radius:10px;
+  }
+  .nav-item.active{
+    color:var(--sun);
+    background:rgba(242,180,65,0.12);
+  }
+  .nav-item .icon{ font-size:1.15rem; }
+
+  /* --- Floating Voice Assistant --- */
+  #voice-fab{
+    position:fixed;
+    right:18px;
+    bottom:92px;
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:none;
+    background:radial-gradient(circle at 30% 30%, #ffe1a0, var(--sun));
+    box-shadow:0 8px 22px rgba(242,180,65,0.5), 0 0 0 6px rgba(242,180,65,0.12);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.5rem;
+    cursor:pointer;
+    z-index:50;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  #voice-fab.listening{
+    animation:mic-pulse 1s ease-in-out infinite;
+  }
+  @keyframes mic-pulse{
+    0%{ box-shadow:0 8px 22px rgba(242,180,65,0.5), 0 0 0 6px rgba(242,180,65,0.2); }
+    50%{ box-shadow:0 8px 26px rgba(242,180,65,0.7), 0 0 0 14px rgba(242,180,65,0.08); }
+    100%{ box-shadow:0 8px 22px rgba(242,180,65,0.5), 0 0 0 6px rgba(242,180,65,0.2); }
+  }
+
+  #voice-toast{
+    position:fixed;
+    right:18px;
+    bottom:158px;
+    max-width:230px;
+    background:rgba(18,32,22,0.95);
+    border:1px solid rgba(242,180,65,0.4);
+    color:var(--cream);
+    font-size:0.78rem;
+    padding:10px 14px;
+    border-radius:12px 12px 2px 12px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.4);
     opacity:0;
     pointer-events:none;
-    transition:opacity 0.2s ease;
+    transform:translateY(8px);
+    transition:opacity 0.25s ease, transform 0.25s ease;
+    z-index:50;
   }
-  .gfva-status.show{opacity:1;}
+  #voice-toast.show{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  @media (max-width:360px){
+    .token-number{ font-size:3.6rem; }
+  }
 </style>
 </head>
 <body>
 
-  <header>
-    <p class="brand"><span>किसान</span> प्रोक्योरमेंट सेवा</p>
+  <!-- Top App Bar -->
+  <header class="appbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <span>किसान संग्रहण सेवा</span>
+    </div>
+    <a href="index.html" class="back-btn">← होम</a>
   </header>
 
-  <main>
-    <div class="token-card">
-      <p class="token-title">आपका वर्तमान टोकन नंबर</p>
-      <h1 class="token-number">#42</h1>
-      <span class="badge-status">कतार में सक्रिय</span>
-    </div>
-
-    <div class="info-box">
-      <div class="info-row">
-        <span class="info-label">अनुमानित प्रतीक्षा समय:</span>
-        <span class="info-val">लगभग 15 मिनट</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">केंद्र:</span>
-        <span class="info-val">रामपुर मंडी केंद्र</span>
-      </div>
-    </div>
-
-    <a class="back-btn" href="index.html">
-      ← मुख्य पृष्ठ पर जाएं
-    </a>
-  </main>
-
-  <footer>
-    <p style="font-size:13px; color:var(--cream-dim); margin:0;">किसी भी सहायता के लिए माइक दबाकर बोलें</p>
-  </footer>
-
-  <!-- FLOATING MINI MIC -->
-  <div id="gfva-root">
-    <div class="gfva-status" id="gfva-status">बोलकर मदद लें</div>
-    <button type="button" class="gfva-mic-btn" id="gfva-mic-btn" aria-label="Voice Assistant">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 15a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 0 0-7 0v5.5A3.5 3.5 0 0 0 12 15Z" fill="#122016"/>
-        <path d="M6.5 11.5a5.5 5.5 0 0 0 11 0" stroke="#122016" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M12 17v3.2M9.2 20.2h5.6" stroke="#122016" stroke-width="1.8" stroke-linecap="round"/>
-      </svg>
-    </button>
+  <div class="page-heading">
+    <h1>आपकी क्यू स्थिति</h1>
+    <p>Your live token &amp; queue status</p>
   </div>
 
-<script>
-(function(){
-  var micBtn = document.getElementById('gfva-mic-btn');
-  var statusBubble = document.getElementById('gfva-status');
-  var SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+  <main>
+    <!-- Token Ticket -->
+    <section class="ticket">
+      <div class="status-badge">
+        <span class="pulse"></span>
+        कतार में सक्रिय · Active in Queue
+      </div>
 
-  if(!SpeechAPI) return;
+      <div class="token-label">आपका टोकन नंबर</div>
+      <div class="token-number"><sup>#</sup>42</div>
 
-  var rec = new SpeechAPI();
-  rec.lang = 'hi-IN';
-  rec.continuous = false;
-  rec.interimResults = false;
+      <hr class="divider-dash">
 
-  micBtn.onclick = function(){
-    try { rec.start(); } catch(e){}
-  };
+      <div class="center-name">रामपुर मंडी केंद्र</div>
+      <div class="center-sub">Rampur Mandi Procurement Center</div>
+    </section>
 
-  rec.onstart = function(){
-    statusBubble.textContent = "सुन रहे हैं...";
-    statusBubble.classList.add('show');
-  };
+    <!-- Helper Info Rows -->
+    <section class="info-card">
+      <div class="info-row">
+        <div class="info-icon">⏱️</div>
+        <div class="info-text">
+          <div class="label">अनुमानित प्रतीक्षा समय</div>
+          <div class="value">लगभग 15 मिनट</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">📍</div>
+        <div class="info-text">
+          <div class="label">मंडी / केंद्र</div>
+          <div class="value">रामपुर मंडी केंद्र</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">👥</div>
+        <div class="info-text">
+          <div class="label">वर्तमान में सेवा में टोकन</div>
+          <div class="value">#36 सेवा में है</div>
+        </div>
+      </div>
+    </section>
 
-  rec.onresult = function(e){
-    var text = (e.results[0][0].transcript || '').toLowerCase();
-    statusBubble.textContent = 'सुना: "' + text + '"';
+    <!-- Live Progress -->
+    <section class="progress-card">
+      <div class="progress-head">
+        <h3>क्यू प्रगति (Queue Progress)</h3>
+        <span>36 / 56</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="progress-foot">
+        <span>शुरुआत</span>
+        <span>आपकी बारी नज़दीक है</span>
+      </div>
+    </section>
 
-    if(text.includes('होम') || text.includes('wapas') || text.includes('mukhy')){
-      window.location.href = 'index.html';
-    } else if(text.includes('बेचना') || text.includes('fasal')){
-      window.location.href = 'visual-login.html';
+    <!-- Actions -->
+    <section class="actions">
+      <a href="sell.html" class="btn btn-primary">🌾 फसल बेचना शुरू करें</a>
+      <a href="index.html" class="btn btn-secondary">🏠 होम पर वापस जाएं</a>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="icon">🏠</span> होम
+    </a>
+    <a href="sell.html" class="nav-item">
+      <span class="icon">🌾</span> बेचना
+    </a>
+    <a href="queue.html" class="nav-item active">
+      <span class="icon">🎫</span> क्यू
+    </a>
+    <a href="profile.html" class="nav-item">
+      <span class="icon">👤</span> प्रोफ़ाइल
+    </a>
+  </nav>
+
+  <!-- Floating Voice Assistant -->
+  <button id="voice-fab" aria-label="Voice assistant / आवाज़ सहायक" title="बोलें: होम, बेचना, क्यू">🎙️</button>
+  <div id="voice-toast"></div>
+
+  <script>
+  (function(){
+    var fab = document.getElementById('voice-fab');
+    var toast = document.getElementById('voice-toast');
+    var toastTimer = null;
+
+    function showToast(msg, duration){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function(){
+        toast.classList.remove('show');
+      }, duration || 2600);
     }
-  };
 
-  rec.onend = function(){
-    setTimeout(function(){
-      statusBubble.classList.remove('show');
-    }, 2500);
-  };
-})();
-</script>
+    // Lightweight command map — voice → destination.
+    // Farmers can say Hindi words like "होम" or "बेचना" to navigate
+    // without a heavy full-screen routing overlay.
+    var commandMap = [
+      { patterns: ['होम', 'home', 'ghar', 'घर'], href: 'index.html', label: 'होम पेज खोल रहे हैं...' },
+      { patterns: ['बेचना', 'बेचो', 'sell', 'fasal'], href: 'sell.html', label: 'बेचना पेज खोल रहे हैं...' },
+      { patterns: ['क्यू', 'कतार', 'queue', 'token', 'टोकन'], href: 'queue.html', label: 'आप पहले से क्यू पेज पर हैं' },
+      { patterns: ['प्रोफ़ाइल', 'profile', 'account'], href: 'profile.html', label: 'प्रोफ़ाइल खोल रहे हैं...' }
+    ];
+
+    function handleTranscript(transcript){
+      var text = transcript.toLowerCase().trim();
+      for (var i = 0; i < commandMap.length; i++){
+        var cmd = commandMap[i];
+        for (var j = 0; j < cmd.patterns.length; j++){
+          if (text.indexOf(cmd.patterns[j].toLowerCase()) !== -1){
+            showToast(cmd.label);
+            if (cmd.href !== 'queue.html'){
+              setTimeout(function(dest){
+                return function(){ window.location.href = dest; };
+              }(cmd.href), 700);
+            }
+            return true;
+          }
+        }
+      }
+      showToast('माफ़ करें, समझ नहीं आया। "होम" या "बेचना" कहें।', 3000);
+      return false;
+    }
+
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition){
+      // Graceful fallback: tapping opens a tiny prompt instead of full-screen routing.
+      fab.addEventListener('click', function(){
+        var typed = window.prompt('आवाज़ सहायक उपलब्ध नहीं है। टाइप करें: होम / बेचना / क्यू / प्रोफ़ाइल');
+        if (typed) handleTranscript(typed);
+      });
+      return;
+    }
+
+    var recognition = new SpeechRecognition();
+    recognition.lang = 'hi-IN';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    var isListening = false;
+
+    recognition.onstart = function(){
+      isListening = true;
+      fab.classList.add('listening');
+      showToast('सुन रहे हैं... बोलें "होम" या "बेचना"', 4000);
+    };
+
+    recognition.onresult = function(event){
+      var transcript = event.results[0][0].transcript;
+      handleTranscript(transcript);
+    };
+
+    recognition.onerror = function(){
+      showToast('माइक्रोफ़ोन में समस्या हुई। कृपया दोबारा प्रयास करें।', 2600);
+    };
+
+    recognition.onend = function(){
+      isListening = false;
+      fab.classList.remove('listening');
+    };
+
+    fab.addEventListener('click', function(){
+      if (isListening){
+        recognition.stop();
+        return;
+      }
+      try{
+        recognition.start();
+      }catch(e){
+        // Recognition already running or blocked — ignore silently.
+      }
+    });
+  })();
+  </script>
+
 </body>
 </html>
