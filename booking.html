@@ -97,6 +97,72 @@
       radial-gradient(circle 8px at 100% 50%, transparent 8px, var(--paper) 8px);
   }
   ::selection{ background: var(--wheat); color: var(--ink); }
+
+  /* Scoped Floating Mic Styles */
+  #gfva-root, #gfva-root * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  #gfva-root {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999999;
+  }
+  .gfva-mic-btn {
+    width: 68px;
+    height: 68px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #16a34a 0%, #ea580c 100%);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+  .gfva-mic-btn:hover { transform: scale(1.06); box-shadow: 0 8px 22px rgba(0,0,0,0.3); }
+  .gfva-mic-btn:active { transform: scale(0.96); }
+  .gfva-mic-icon { width: 28px; height: 28px; fill: #ffffff; }
+  .gfva-pulse-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 3px solid #16a34a;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #gfva-root.gfva-listening .gfva-pulse-ring { animation: gfva-pulse-anim 1.4s ease-out infinite; }
+  #gfva-root.gfva-listening .gfva-pulse-ring.gfva-ring-delay { animation-delay: 0.5s; }
+  @keyframes gfva-pulse-anim {
+    0%   { transform: scale(1);   opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  #gfva-root.gfva-listening .gfva-mic-btn {
+    background: linear-gradient(135deg, #ea580c 0%, #16a34a 100%);
+    box-shadow: 0 0 0 6px rgba(234, 88, 12, 0.25), 0 6px 18px rgba(0,0,0,0.3);
+  }
+  .gfva-status-bubble {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    max-width: 240px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+  }
+  .gfva-status-bubble.gfva-visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body class="min-h-screen">
@@ -195,6 +261,19 @@
   </div>
 </div>
 
+<!-- GLOBAL FLOATING VOICE ASSISTANT -->
+<div id="gfva-root">
+  <div class="gfva-status-bubble" id="gfva-status">नमस्ते! बोलने के लिए माइक दबाएं</div>
+  <button type="button" class="gfva-mic-btn" id="gfva-mic-btn" aria-label="Voice Assistant">
+    <span class="gfva-pulse-ring"></span>
+    <span class="gfva-pulse-ring gfva-ring-delay"></span>
+    <svg class="gfva-mic-icon" viewBox="0 0 24 24">
+      <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
+      <path d="M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V20H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-2.08A7 7 0 0 0 19 11z"/>
+    </svg>
+  </button>
+</div>
+
 <script>
   // ---------- dummy data ----------
   const centers = [
@@ -203,7 +282,6 @@
     { id:'c3', name:'Govindpur Kisan Kendra', distance:'9.8 km', address:'Govindpur Chowk, Main Bazaar' },
   ];
 
-  // dummy capacity per slot (booked/total) — regenerated per date+center combo deterministically
   const slotTimes = [
     { key:'9am', label:'9:00 AM', icon:'fa-sun' },
     { key:'11am', label:'11:00 AM', icon:'fa-cloud-sun' },
@@ -230,7 +308,6 @@
       opt.textContent = `${c.name} · ${c.distance}`;
       sel.appendChild(opt);
     });
-    // default date = today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('dropDate').value = today;
     document.getElementById('dropDate').min = today;
@@ -342,130 +419,137 @@
 
   initCenters();
 </script>
-<!-- ============================================================
-  GLOBAL FLOATING VOICE ASSISTANT SNIPPET
-  Paste this entire block just before </body> on any page.
-  100% isolated: scoped classes (gfva-*), no body resets,
-  no global CSS overrides, no dependency on Tailwind being present.
-============================================================= -->
 
-<style>
-  /* All rules are scoped to #gfva-root and its children only.
-     Nothing here touches body, html, *, or unprefixed tags/classes. */
-
-  #gfva-root, #gfva-root * {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-  }
-
-  #gfva-root {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 999999; /* stays above host page content */
-  }
-
-  .gfva-mic-btn {
-    width: 68px;
-    height: 68px;
-    border-radius: 9999px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #16a34a 0%, #ea580c 100%); /* green -> orange, agri theme */
-    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-  }
-
-  .gfva-mic-btn:hover {
-    transform: scale(1.06);
-    box-shadow: 0 8px 22px rgba(0,0,0,0.3);
-  }
-
-  .gfva-mic-btn:active {
-    transform: scale(0.96);
-  }
-
-  .gfva-mic-icon {
-    width: 28px;
-    height: 28px;
-    fill: #ffffff;
-  }
-
-  /* Pulsing rings shown only while actively listening */
-  .gfva-pulse-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    border: 3px solid #16a34a;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  #gfva-root.gfva-listening .gfva-pulse-ring {
-    animation: gfva-pulse-anim 1.4s ease-out infinite;
-  }
-
-  #gfva-root.gfva-listening .gfva-pulse-ring.gfva-ring-delay {
-    animation-delay: 0.5s;
-  }
-
-  @keyframes gfva-pulse-anim {
-    0%   { transform: scale(1);   opacity: 0.6; }
-    100% { transform: scale(1.8); opacity: 0; }
-  }
-
-  #gfva-root.gfva-listening .gfva-mic-btn {
-    background: linear-gradient(135deg, #ea580c 0%, #16a34a 100%);
-    box-shadow: 0 0 0 6px rgba(234, 88, 12, 0.25), 0 6px 18px rgba(0,0,0,0.3);
-  }
-
-  .gfva-status-bubble {
-    position: absolute;
-    bottom: 80px;
-    right: 0;
-    max-width: 240px;
-    background: #ffffff;
-    color: #1f2937;
-    font-size: 13px;
-    line-height: 1.4;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-    opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    pointer-events: none;
-  }
-
-  .gfva-status-bubble.gfva-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
-
-<div id="gfva-root">
-  <div class="gfva-status-bubble" id="gfva-status">नमस्ते! बोलने के लिए माइक दबाएं</div>
-
-  <button type="button" class="gfva-mic-btn" id="gfva-mic-btn" aria-label="Voice Assistant">
-    <span class="gfva-pulse-ring"></span>
-    <span class="gfva-pulse-ring gfva-ring-delay"></span>
-    <svg class="gfva-mic-icon" viewBox="0 0 24 24">
-      <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
-      <path d="M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V20H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-2.08A7 7 0 0 0 19 11z"/>
-    </svg>
-  </button>
-</div>
-
+<!-- ADVANCED INTENT ROUTING VOICE ASSISTANT SCRIPT -->
 <script>
+const INTENTS = [
+  {
+    name: 'sell',
+    route: 'visual-login.html',
+    confirmation: 'ठीक है, फ़सल बेचने का फॉर्म खोल रहे हैं।',
+    keywords: [
+      'fasal bechna', 'fasal bechni hai', 'dhan bechna', 'dhaan bechna',
+      'gehun bechna', 'gehu bechna', 'crop sell', 'sell crop',
+      'registration karna', 'register karo', 'registration', 'naya form',
+      'entry karni hai', 'entry karo', 'fasal ki bikri', 'bikri karni hai',
+      'nayi entry', 'फसल बेचना', 'फ़सल बेचनी है', 'धान बेचना', 'गेहूं बेचना', 'गेहूँ बेचना',
+      'रजिस्ट्रेशन', 'रजिस्टर करो', 'नया फॉर्म', 'एंट्री करनी है', 'फसल की बिक्री', 'बिक्री करनी है'
+    ],
+  },
+  {
+    name: 'queue',
+    route: 'queue.html',
+    confirmation: 'आपका टोकन और कतार की जानकारी दिखा रहे हैं।',
+    keywords: [
+      'token number', 'token number kya hai', 'mera token', 'meri turn',
+      'meri turn kab hai', 'mera number kab', 'katar', 'katar kitni lambi hai',
+      'line mein number', 'queue status', 'waiting time', 'mera token dikhao',
+      'kitni der lagegi', 'टोकन नंबर', 'मेरा टोकन', 'मेरी बारी', 'मेरी बारी कब है', 'कतार',
+      'लाइन में नंबर', 'वेटिंग टाइम', 'टोकन दिखाओ', 'कितनी देर लगेगी'
+    ],
+  },
+  {
+    name: 'tracking',
+    route: 'tracking.html',
+    confirmation: 'आपकी भुगतान की जानकारी दिखा रहे हैं।',
+    keywords: [
+      'paise kab milenge', 'paisa kab milega', 'payment aaya kya',
+      'payment status', 'rsiid kahan hai', 'receipt dikhao', 'receipt kahan hai',
+      'status kya hai', 'bill check karo', 'tracking', 'paisa transfer',
+      'payment aaya', 'पैसे कब मिलेंगे', 'पैसा कब मिलेगा', 'भुगतान आया क्या', 'रसीद कहाँ है',
+      'रसीद दिखाओ', 'स्टेटस क्या है', 'बिल चेक करो', 'ट्रैकिंग', 'पैसा ट्रांसफर', 'भुगतान आया'
+    ],
+  },
+  {
+    name: 'manual',
+    route: 'manual-login.html',
+    confirmation: 'ठीक है, लिखकर फॉर्म भरने का पेज खोल रहे हैं।',
+    keywords: [
+      'likhkar form bharna hai', 'likh kar form bharna hai', 'type karna hai',
+      'manual entry', 'details badalni hain', 'jankari badalni hai',
+      'form kholo', 'form bharna hai', 'लिखकर फॉर्म भरना है', 'टाइप करना है', 'मैनुअल एंट्री',
+      'जानकारी बदलनी है', 'फॉर्म खोलो', 'फॉर्म भरना है'
+    ],
+  },
+  {
+    name: 'home',
+    route: 'index.html',
+    confirmation: 'ठीक है, आपको मुख्य पृष्ठ पर ले जा रहे हैं।',
+    keywords: [
+      'wapas jao', 'wapas chalo', 'home page', 'shuru se', 'madad chahiye',
+      'help', 'samajh nahi aaya', 'samjha nahi', 'kisan seva',
+      'वापस जाओ', 'वापस चलो', 'होम पेज', 'शुरू से', 'मदद चाहिए',
+      'समझ नहीं आया', 'समझा नहीं', 'किसान सेवा'
+    ],
+  },
+];
+
+function normalizeTranscript(raw) {
+  return raw
+    .toLowerCase()
+    .normalize('NFC')
+    .replace(/[.,!?।]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function matchIntent(transcript) {
+  const text = normalizeTranscript(transcript);
+  let best = null;
+  let bestScore = 0;
+
+  for (const intent of INTENTS) {
+    for (const kw of intent.keywords) {
+      const kwNorm = normalizeTranscript(kw);
+      if (text.includes(kwNorm)) {
+        const score = kwNorm.length;
+        if (score > bestScore) {
+          bestScore = score;
+          best = intent;
+        }
+      }
+    }
+  }
+  return best;
+}
+
+function speakAndRedirect(intent) {
+  const utterance = new SpeechSynthesisUtterance(intent.confirmation);
+  utter.lang = 'hi-IN';
+  utter.rate = 0.95;
+
+  const voices = window.speechSynthesis.getVoices();
+  const hindiVoice = voices.find(v => v.lang === 'hi-IN');
+  if (hindiVoice) utterance.voice = hindiVoice;
+
+  window.speechSynthesis.speak(utterance);
+
+  setTimeout(() => {
+    window.location.href = intent.route;
+  }, 1500);
+}
+
+function speakUnrecognized() {
+  const msg = 'माफ़ कीजिए, समझ नहीं पाया। कृपया दोबारा बोलें।';
+  const utterance = new SpeechSynthesisUtterance(msg);
+  utter.lang = 'hi-IN';
+  window.speechSynthesis.speak(utterance);
+}
+
+function handleVoiceCommand(transcript) {
+  const intent = matchIntent(transcript);
+  if (intent) {
+    speakAndRedirect(intent);
+  } else {
+    speakUnrecognized();
+  }
+  return intent ? intent.name : null;
+}
+
 (function () {
-  var root       = document.getElementById('gfva-root');
-  var micBtn     = document.getElementById('gfva-mic-btn');
-  var statusEl   = document.getElementById('gfva-status');
+  var root = document.getElementById('gfva-root');
+  var micBtn = document.getElementById('gfva-mic-btn');
+  var statusEl = document.getElementById('gfva-status');
 
   var SpeechRecognitionAPI = window.webkitSpeechRecognition || window.SpeechRecognition;
 
@@ -478,45 +562,6 @@
         statusEl.classList.remove('gfva-visible');
       }, autoHideMs);
     }
-  }
-
-  function speak(text, onEnd) {
-    try {
-      window.speechSynthesis.cancel(); // stop any queued speech first
-      var utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'hi-IN';
-      utter.rate = 1;
-      utter.pitch = 1;
-      if (onEnd) utter.onend = onEnd;
-      window.speechSynthesis.speak(utter);
-    } catch (e) {
-      if (onEnd) onEnd();
-    }
-  }
-
-  function routeFromTranscript(transcript) {
-    var t = transcript.toLowerCase();
-
-    var routes = [
-      { keywords: ['टोकन', 'नंबर', 'कतार'], page: 'queue.html' },
-      { keywords: ['स्टेटस', 'ट्रैक', 'पैसे', 'रसीद'], page: 'tracking.html' },
-      { keywords: ['होम', 'शुरू', 'वापस'], page: 'index.html' },
-      { keywords: ['बुक', 'बेचना', 'स्लॉट'], page: 'booking.html' }
-    ];
-
-    for (var i = 0; i < routes.length; i++) {
-      var match = routes[i].keywords.some(function (kw) {
-        return t.indexOf(kw) !== -1;
-      });
-      if (match) {
-        showStatus('जा रहे हैं: ' + routes[i].page, 2000);
-        speak('ठीक है, ले जा रहे हैं', function () {
-          window.location.href = routes[i].page;
-        });
-        return true;
-      }
-    }
-    return false;
   }
 
   function startListening() {
@@ -539,12 +584,7 @@
     recognition.onresult = function (event) {
       var transcript = event.results[0][0].transcript || '';
       showStatus('आपने कहा: "' + transcript + '"');
-
-      var routed = routeFromTranscript(transcript);
-      if (!routed) {
-        showStatus('माफ़ कीजिये, समझ नहीं आया। कृपया फिर बोलें', 3500);
-        speak('माफ़ कीजिये, मुझे समझ नहीं आया');
-      }
+      handleVoiceCommand(transcript);
     };
 
     recognition.onerror = function () {
@@ -564,8 +604,15 @@
   }
 
   micBtn.addEventListener('click', function () {
-    // Greet, then begin listening once the greeting finishes speaking
-    speak('हाँ, बताइये?', startListening);
+    try {
+      window.speechSynthesis.cancel();
+      var utter = new SpeechSynthesisUtterance('हाँ, बोलिये?');
+      utter.lang = 'hi-IN';
+      utter.onend = startListening;
+      window.speechSynthesis.speak(utter);
+    } catch (e) {
+      startListening();
+    }
   });
 })();
 </script>
