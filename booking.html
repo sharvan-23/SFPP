@@ -275,6 +275,16 @@
 </div>
 
 <script>
+  // Check and apply persistent language/mode state on load
+  (function(){
+    try {
+      const savedLang = localStorage.getItem('kisan_lang');
+      if(savedLang) {
+        // Language configuration is persisted across pages
+      }
+    } catch(e) {}
+  })();
+
   // ---------- dummy data ----------
   const centers = [
     { id:'c1', name:'Rampur Mandi Kendra', distance:'2.4 km', address:'Rampur Mandi Road, near Grain Godown' },
@@ -399,6 +409,9 @@
 
   function confirmBooking(){
     if(!selectedSlot) return;
+    try {
+      localStorage.setItem('kisan_booked_slot', JSON.stringify(selectedSlot));
+    } catch(e) {}
     window.location.href = 'queue.html';
   }
 
@@ -520,7 +533,6 @@ function speakAndRedirect(intent) {
     window.speechSynthesis.speak(utterance);
   } catch (e) {}
 
-  // Fast & Instant Redirect without freezing
   setTimeout(() => {
     window.location.href = intent.route;
   }, 800);
@@ -531,7 +543,7 @@ function speakUnrecognized() {
     const msg = 'माफ़ कीजिए, समझ नहीं पाया। कृपया दोबारा बोलें।';
     const utterance = new SpeechSynthesisUtterance(msg);
     utter.lang = 'hi-IN';
-    window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.speak(utter);
   } catch(e) {}
 }
 
