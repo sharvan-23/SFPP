@@ -98,6 +98,22 @@
   }
   ::selection{ background: var(--wheat); color: var(--ink); }
 
+  .lang-toggle-btn{
+    border: 2px solid var(--leaf);
+    background: transparent;
+    color: var(--leaf);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .lang-toggle-btn:hover{
+    background: var(--leaf);
+    color: var(--paper);
+  }
+
   /* Scoped Floating Mic Styles */
   #gfva-root, #gfva-root * {
     box-sizing: border-box;
@@ -175,35 +191,38 @@
         <i class="fa-solid fa-wheat-awn" style="color:#FBF7EE"></i>
       </div>
       <div class="leading-tight">
-        <p class="font-display font-semibold text-lg">Kisan Kendra</p>
-        <p class="text-xs font-hi" style="color:var(--soil)">स्लॉट बुकिंग डैशबोर्ड</p>
+        <p class="font-display font-semibold text-lg" data-en="Kisan Kendra" data-hi="किसान केंद्र">Kisan Kendra</p>
+        <p class="text-xs font-hi" style="color:var(--soil)" data-en="Slot Booking Dashboard" data-hi="स्लॉट बुकिंग डैशबोर्ड">स्लॉट बुकिंग डैशबोर्ड</p>
       </div>
     </div>
-    <div class="flex items-center gap-2 text-sm" style="color:var(--soil)">
-      <i class="fa-solid fa-circle-user text-lg"></i>
-      <span class="hidden sm:inline">Naresh malik · kurmalli</span>
+    <div class="flex items-center gap-4">
+      <button onclick="toggleGlobalLanguage()" id="langSwitchBtn" class="lang-toggle-btn">हिं / EN</button>
+      <div class="hidden sm:flex items-center gap-2 text-sm" style="color:var(--soil)">
+        <i class="fa-solid fa-circle-user text-lg"></i>
+        <span class="hidden sm:inline">Naresh malik · kurmalli</span>
+      </div>
     </div>
   </div>
 </header>
 
 <main class="max-w-6xl mx-auto px-5 py-10">
 
-  <p class="uppercase tracking-widest text-xs font-semibold" style="color:var(--soil)">Step 1 of 2</p>
+  <p class="uppercase tracking-widest text-xs font-semibold" style="color:var(--soil)" data-en="Step 1 of 2" data-hi="चरण 1 का 2">Step 1 of 2</p>
   <h1 class="font-display text-4xl sm:text-5xl font-semibold mt-2 leading-tight">
-    Apna drop-off <span style="color:var(--leaf)">slot</span> book karein
+    <span data-en="Apna drop-off " data-hi="अपना ड्रॉप-ऑफ़ ">Apna drop-off </span><span style="color:var(--leaf)" data-en="slot" data-hi="स्लॉट">slot</span> <span data-en="book karein" data-hi="बुक करें">book karein</span>
   </h1>
-  <p class="mt-3 text-[#5b5147] max-w-lg">Center, tareekh aur samay chunein — hum aapko turant slot confirm kar denge.</p>
+  <p class="mt-3 text-[#5b5147] max-w-lg" data-en="Select center, date and time — we will confirm your slot instantly." data-hi="केंद्र, तारीख और समय चुनें — हम आपको तुरंत स्लॉट कन्फर्म कर देंगे।">Center, tareekh aur samay chunein — hum aapko turant slot confirm kar denge.</p>
 
   <!-- Center + Date -->
   <div class="mt-8 grid sm:grid-cols-2 gap-5 max-w-2xl">
     <div>
-      <label class="block text-sm font-semibold mb-1.5">Procurement Center <span class="font-hi" style="color:var(--soil)">(Nazdeeki Kendra)</span></label>
+      <label class="block text-sm font-semibold mb-1.5"><span data-en="Procurement Center" data-hi="खरीद केंद्र">Procurement Center</span> <span class="font-hi" style="color:var(--soil)" data-en="(Nazdeeki Kendra)" data-hi="(नज़दीकी केंद्र)">(Nazdeeki Kendra)</span></label>
       <select id="centerSelect" onchange="renderSlots()" class="field-input w-full rounded-lg px-4 py-3 text-base">
-        <option value="">-- Center chunein --</option>
+        <option value="" data-en="-- Select Center --" data-hi="-- केंद्र चुनें --">-- Center chunein --</option>
       </select>
     </div>
     <div>
-      <label class="block text-sm font-semibold mb-1.5">Drop-off Tareekh <span class="font-hi" style="color:var(--soil)">(Date)</span></label>
+      <label class="block text-sm font-semibold mb-1.5"><span data-en="Drop-off Date" data-hi="ड्रॉप-ऑफ़ तारीख">Drop-off Tareekh</span> <span class="font-hi" style="color:var(--soil)" data-en="(Date)" data-hi="(तारीख)">(Date)</span></label>
       <input id="dropDate" type="date" onchange="renderSlots()" class="field-input w-full rounded-lg px-4 py-3 text-base font-mono">
     </div>
   </div>
@@ -216,13 +235,13 @@
 
   <!-- Slots -->
   <div id="slotsSection" class="mt-10 hidden">
-    <h2 class="font-display text-2xl font-semibold mb-1">Uplabdh Samay <span class="text-base font-normal font-hi" style="color:var(--soil)">(Available Slots)</span></h2>
-    <p class="text-sm text-[#8a7a5f] mb-5">Ek slot chunein aage badhne ke liye.</p>
+    <h2 class="font-display text-2xl font-semibold mb-1"><span data-en="Available Time Slots" data-hi="उपलब्ध समय">Uplabdh Samay</span> <span class="text-base font-normal font-hi" style="color:var(--soil)" data-en="(Available Slots)" data-hi="(उपलब्ध स्लॉट)">(Available Slots)</span></h2>
+    <p class="text-sm text-[#8a7a5f] mb-5" data-en="Select a slot to proceed further." data-hi="आगे बढ़ने के लिए एक स्लॉट चुनें।">Ek slot chunein aage badhne ke liye.</p>
     <div id="slotsGrid" class="grid sm:grid-cols-3 gap-4"></div>
   </div>
 
   <p id="emptyHint" class="mt-10 text-sm text-[#8a7a5f] italic">
-    <i class="fa-solid fa-arrow-up mr-1"></i>Slots dekhne ke liye upar center aur tareekh chunein.
+    <i class="fa-solid fa-arrow-up mr-1"></i><span data-en="Select center and date above to view slots." data-hi="स्लॉट देखने के लिए ऊपर केंद्र और तारीख चुनें।">Slots dekhne ke liye upar center aur tareekh chunein.</span>
   </p>
 </main>
 
@@ -231,19 +250,19 @@
   <div class="modal-panel ticket-edge bg-[--paper] w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl border-2" style="border-color:#D8CBAE;">
     <div class="p-6 sm:p-7">
       <div class="flex items-center justify-between">
-        <h3 class="font-display text-xl font-semibold">Booking Summary</h3>
+        <h3 class="font-display text-xl font-semibold" data-en="Booking Summary" data-hi="बुकिंग सारांश">Booking Summary</h3>
         <button onclick="closeModal()" class="text-[#8a7a5f] hover:text-[--ink] text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="mt-4 border-t-2 border-dashed border-[#D8CBAE] pt-4 space-y-3 text-sm">
-        <div class="flex justify-between"><span class="text-[#8a7a5f]">Farmer</span><span class="font-semibold">Ramesh Kumar</span></div>
-        <div class="flex justify-between"><span class="text-[#8a7a5f]">Center</span><span class="font-semibold text-right" id="sumCenter">—</span></div>
-        <div class="flex justify-between"><span class="text-[#8a7a5f]">Tareekh</span><span class="font-semibold font-mono" id="sumDate">—</span></div>
-        <div class="flex justify-between"><span class="text-[#8a7a5f]">Samay</span><span class="font-semibold" id="sumSlot">—</span></div>
-        <div class="flex justify-between"><span class="text-[#8a7a5f]">Anumanit Kisan</span><span class="font-semibold" id="sumCount">—</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Farmer" data-hi="किसान">Farmer</span><span class="font-semibold">Ramesh Kumar</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Center" data-hi="केंद्र">Center</span><span class="font-semibold text-right" id="sumCenter">—</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Date" data-hi="तारीख">Tareekh</span><span class="font-semibold font-mono" id="sumDate">—</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Time" data-hi="समय">Samay</span><span class="font-semibold" id="sumSlot">—</span></div>
+        <div class="flex justify-between"><span class="text-[#8a7a5f]" data-en="Estimated Farmers" data-hi="अनुमानित किसान">Anumanit Kisan</span><span class="font-semibold" id="sumCount">—</span></div>
       </div>
       <div class="mt-5 border-t-2 border-dashed border-[#D8CBAE] pt-4">
         <button onclick="confirmBooking()" class="btn-primary w-full rounded-lg py-3.5 font-semibold text-base shadow-sm">
-          <i class="fa-solid fa-calendar-check mr-2"></i>Book Slot
+          <i class="fa-solid fa-calendar-check mr-2"></i><span data-en="Book Slot" data-hi="स्लॉट बुक करें">Book Slot</span>
         </button>
       </div>
     </div>
@@ -257,13 +276,13 @@
   </div>
   <div>
     <p class="text-xs font-semibold" style="color:var(--leaf)">Kisan Kendra <span class="text-[#8a7a5f] font-normal">· abhi</span></p>
-    <p class="text-sm mt-0.5" id="smsBody">Slot booked successfully. SMS sent.</p>
+    <p class="text-sm mt-0.5" id="smsBody" data-en="Slot booked successfully. SMS sent." data-hi="स्लॉट सफलतापूर्वक बुक हो गया। एसएमएस भेज दिया गया है।">Slot booked successfully. SMS sent.</p>
   </div>
 </div>
 
 <!-- GLOBAL FLOATING VOICE ASSISTANT -->
 <div id="gfva-root">
-  <div class="gfva-status-bubble" id="gfva-status">नमस्ते! बोलने के लिए माइक दबाएं</div>
+  <div class="gfva-status-bubble" id="gfva-status" data-en="Namaste! Press mic to speak" data-hi="नमस्ते! बोलने के लिए माइक दबाएं">नमस्ते! बोलने के लिए माइक दबाएं</div>
   <button type="button" class="gfva-mic-btn" id="gfva-mic-btn" aria-label="Voice Assistant">
     <span class="gfva-pulse-ring"></span>
     <span class="gfva-pulse-ring gfva-ring-delay"></span>
@@ -275,14 +294,44 @@
 </div>
 
 <script>
-  // Check and apply persistent language/mode state on load
-  (function(){
+  // ---------- Global Language Persistence Script ----------
+  function getStoredLanguage() {
     try {
-      const savedLang = localStorage.getItem('kisan_lang');
-      if(savedLang) {
-        // Language configuration is persisted across pages
-      }
+      // Index page ki language ya is page ki apni saved language check karega
+      return localStorage.getItem('kisan_lang') || 'hi';
+    } catch(e) {
+      return 'hi';
+    }
+  }
+
+  function setStoredLanguage(lang) {
+    try {
+      localStorage.setItem('kisan_lang', lang);
     } catch(e) {}
+  }
+
+  function applyGlobalLanguage(lang) {
+    document.querySelectorAll('[data-en][data-hi]').forEach(el => {
+      el.innerHTML = lang === 'hi' ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+    });
+    document.documentElement.lang = lang;
+    const btn = document.getElementById('langSwitchBtn');
+    if(btn) {
+      btn.textContent = lang === 'hi' ? 'English' : 'हिंदी';
+    }
+  }
+
+  function toggleGlobalLanguage() {
+    const current = getStoredLanguage();
+    const next = current === 'hi' ? 'en' : 'hi';
+    setStoredLanguage(next);
+    applyGlobalLanguage(next);
+  }
+
+  // Page load hote hi language apply karo
+  (function(){
+    const currentLang = getStoredLanguage();
+    applyGlobalLanguage(currentLang);
   })();
 
   // ---------- dummy data ----------
@@ -543,7 +592,7 @@ function speakUnrecognized() {
     const msg = 'माफ़ कीजिए, समझ नहीं पाया। कृपया दोबारा बोलें।';
     const utterance = new SpeechSynthesisUtterance(msg);
     utter.lang = 'hi-IN';
-    window.speechSynthesis.speak(utter);
+    window.speechSynthesis.speak(utterance);
   } catch(e) {}
 }
 
