@@ -399,11 +399,7 @@
 
   function confirmBooking(){
     if(!selectedSlot) return;
-    const tokenNum = Math.floor(30 + Math.random()*40);
-    document.getElementById('smsBody').textContent =
-      `Slot Booked Successfully! ${selectedSlot.label} par aapka token: ${tokenNum}. SMS sent.`;
-    closeModal();
-    showToast();
+    window.location.href = 'queue.html';
   }
 
   function showToast(){
